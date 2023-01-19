@@ -108,6 +108,8 @@ class TextEntry(Selectable):
 
     def backspace(self):
         n_of_loops = 1
+        if len(self.content[self.cursor_pos.y])>=3 and self.content[self.cursor_pos.y][self.cursor_pos.x-1]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-2]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-3]==' ':
+            n_of_loops = 3
         if self.selection != '':
             if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
                 self.cursor_pos = self.onClickPos
@@ -135,25 +137,27 @@ class TextEntry(Selectable):
                 self.update_labels()
         self.focus_on_cursor()
 
-    def add_char(self, unicode):
-        self.content[self.cursor_pos.y] = list(self.content[self.cursor_pos.y])
+    def add_char(self, unicode, isManual=False):
+        # DELETE EVERYTHING IN SELECTION
+        if self.selection != '':
+            if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
+                self.cursor_pos = self.onClickPos
+            self.backspace() # backspace only once since text is selected
         if unicode in table:
-            # DELETE EVERYTHING IN SELECTION
-            if self.selection != '':
-                if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
-                    self.cursor_pos = self.onClickPos
-                self.backspace() # backspace only once since text is selected
             # PLACE CHAR
+            self.content[self.cursor_pos.y] = list(self.content[self.cursor_pos.y])
             self.content[self.cursor_pos.y].insert(self.cursor_pos.x, unicode)
             # PLACE 2ND CHAR IF IN AUTOPLACABLE_CHARS
-            for i in range(len(autoplacableChars)):
-                if autoplacableChars[i]==unicode:
-                    self.content[self.cursor_pos.y].insert(self.cursor_pos.x+1, autoplacedChars[i])
+            if isManual:
+                for i in range(len(autoplacableChars)):
+                    if autoplacableChars[i]==unicode:
+                        self.content[self.cursor_pos.y].insert(self.cursor_pos.x+1, autoplacedChars[i])
+            self.move_cursor(1)
         elif unicode == 'TAB':
+            self.content[self.cursor_pos.y] = list(self.content[self.cursor_pos.y])
             self.content[self.cursor_pos.y].insert(self.cursor_pos.x, '   ')
-            self.move_cursor(2)
+            self.move_cursor(3)
         self.content[self.cursor_pos.y] = ''.join(self.content[self.cursor_pos.y])
-        self.move_cursor(1)
         self.clear_selection()
         self.update_labels()
         self.focus_on_cursor()
@@ -195,7 +199,6 @@ class TextEntry(Selectable):
                 coefficient = abs(self.displayedLines[0]-i)
                 self.labels[i].position = Vector2(int(self.pos.x+self.labelOffset.x), int(self.pos.y+self.labelOffset.y+VERTICAL_SPACE*coefficient))
                 self.labels[i].text = self.content[i]
-                self.text += '\n'+self.labels[i].text
 
     def clear_selection(self):
         self.onClickPos = Vector2(-1,-1)
@@ -242,7 +245,7 @@ class TextEntry(Selectable):
             self.displayedLines = [0, (self.height-self.labelOffset.y)//VERTICAL_SPACE]
         if self.selection != '':
             cursor.selectedElement = self
-        
+
     def cursor2text_pos(self):
         if self.isHovered:
             mouse_pos = Vector2(int(cursor.pos.x), int(cursor.pos.y)) # Mouse pointer's pos, not the text cursor's
@@ -261,7 +264,7 @@ class TextEntry(Selectable):
         self.onClickPos = self.cursor2text_pos()
 
     def onContinuousClick(self):
-        
+
         self.onReleasePos = self.cursor2text_pos()
 
     def update_scrolling(self):
@@ -305,6 +308,13 @@ class TextEntry(Selectable):
         # drawing text cursor
         if self.isActive and self.cursor_pos.y>=self.displayedLines[0] and self.cursor_pos.y<self.displayedLines[1]:
             pygame.draw.rect(screen, (255,255,255), (self.pos.x+self.labelOffset.x+HORIZONTAL_SPACE*(self.cursor_pos.x-self.displayedChars[0]), self.pos.y+self.labelOffset.y+VERTICAL_SPACE*(self.cursor_pos.y-self.displayedLines[0]), 1, VERTICAL_SPACE))
+
+    def get_text(self):
+        out = ''
+        for line in self.content:
+            out += line+'\n'
+        self.text = out
+        return out
 
     def __repr__(self):
         print(self.text)
