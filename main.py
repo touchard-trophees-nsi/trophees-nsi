@@ -5,6 +5,8 @@ from scripts.events import update_event
 from scripts.math.vector2 import Vector2, vectorize
 from scripts.ui.panel import Panel, TextPanel
 from scripts.ui.grid import grid
+from scripts.ui.shapes import Shape
+from scripts.ui.shapesDrawer import updatedDrawer,shapes
 
 IS_DEV = False
 MAX_FPS = 60
@@ -59,9 +61,17 @@ while True:
     for panel in panels:
         panel.update(panels)
 
+    # ----- shape updates ----- #
+    for shape in shapes:
+        shape.update()
+    updatedDrawer()
+    
     # ----- drawing ----- #
     grid(61,(20,20,20))
     grid(181,(80,80,80))
+    for shape in shapes:
+        shape.draw(screen)
+
     for panel in panels:
         panel.draw(screen)
 
