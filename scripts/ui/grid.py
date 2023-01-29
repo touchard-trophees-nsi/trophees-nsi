@@ -2,13 +2,9 @@
 import pygame, sys
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 
-def lines(size,color):
+def grid(size,color):
     screenWidth=screen.get_size()[0]
     screenHeight=screen.get_size()[1]
     for x in range(0,screenWidth,size-1):
         for y in range(0,screenHeight,size-1):
             pygame.draw.rect(screen,color,((x,y),(size,size)),1)
-
-def grid():
-    lines(61,(40,40,40))
-    lines(181,(200,200,200))
