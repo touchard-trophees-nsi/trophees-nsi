@@ -6,7 +6,7 @@ from scripts.math.vector2 import Vector2, vectorize
 from scripts.ui.panel import Panel, TextPanel
 from scripts.ui.grid import grid
 from scripts.ui.shapes import Shape
-from scripts.ui.shapesDrawer import updatedDrawer,shapes
+from scripts.ui.shapesDrawer import updatedDrawer
 
 IS_DEV = False
 MAX_FPS = 60
@@ -22,6 +22,7 @@ clock = pygame.time.Clock()
 
 # variables
 panels = [TextPanel(Vector2(0,0), Vector2(500,500))]
+shapes = [Shape(Vector2(50,50),Vector2(50,50))]
 
 # MAIN LOGIC
 while True:
@@ -63,8 +64,17 @@ while True:
 
     # ----- shape updates ----- #
     for shape in shapes:
-        shape.update()
-    updatedDrawer()
+        shape.update(shapes)
+
+    """
+    pos2 = (shapes[-1].pos.x,shapes[-1].pos.y)
+    pygame.draw.circle(screen,(200,200,200),pos2,60,width=2)
+    if shapes[-1].nearest(shapes,60) != None:
+        pos1 = (shapes[-1].nearest(shapes,60).pos.x,shapes[-1].nearest(shapes,60).pos.y)
+        pygame.draw.line(screen,(250,250,250),pos1,pos2)
+    screen.blit(pygame.font.Font(None, 18).render(str(cursor.selectedElement==shapes[0]), True, (150,150,150)),(100,40))
+    """
+    updatedDrawer(shapes)
     
     # ----- drawing ----- #
     grid(61,(20,20,20))

@@ -1,43 +1,65 @@
 import pygame
 from scripts.math.vector2 import Vector2
 from scripts.cursor import cursor
+from scripts.ui.selectable import Selectable
+from scripts.graphics.color import RGB
 
-class Moveable_element:
-    def __init__(self,pos):
-        self.pos = pos
+class MoveableElement(Selectable):
+    def __init__(self,pos,size,color):
+        super().__init__(pos,size,idleColor=color)
+        self.pos,self.size = pos,size
+        self.FirstClickPos = Vector2.ZERO()
 
-    def update(self):
-        if cursor.pos.x>self.pos.x and cursor.pos.x<self.pos.x+self.size.x and cursor.pos.y>self.pos.y and cursor.pos.y<self.pos.y+self.size.y and not self.isLocked and cursor.selectedElement==None or cursor.selectedElement==self:
-            if cursor.eventType=='left':
-                cursor.selectedElement = self
-                self.draggingPanel = True
-                if self.barFirstClickPos == Vector2.ZERO():
-                        self.barFirstClickPos = Vector2(self.pos.x-cursor.pos.x, self.pos.y-cursor.pos.y)
-            else:
-                cursor.selectedElement = None
-                self.barFirstClickPos = Vector2.ZERO()
+    def update(self,shapes):
+        self.base_update()
+        self.update_pos(shapes)
 
-        if self.barFirstClickPos != Vector2.ZERO():
-            self.pos = Vector2(cursor.pos.x+self.barFirstClickPos.x, cursor.pos.y+self.barFirstClickPos.y)
-    """
-    def nearest(self,radius):
+    def update_pos(self,shapes):
+        self.shapes = shapes
+        if self.continousClick:
+            if self.FirstClickPos == Vector2.ZERO():
+                self.FirstClickPos = Vector2(self.pos.x-cursor.pos.x, self.pos.y-cursor.pos.y)
+            nshape = self.nearest(shapes,60)
+        else:
+            self.FirstClickPos = Vector2.ZERO()
+        if self.FirstClickPos != Vector2.ZERO():
+            self.pos = Vector2(cursor.pos.x+self.FirstClickPos.x, cursor.pos.y+self.FirstClickPos.y)
+
+    def onRelease(self):
+        nshape = self.nearest(self.shapes,60)
+        if nshape != None:
+            vectdiff = nshape.pos - self.pos
+            if vectdiff.x < 0 and -min(nshape.size.y,self.size.y)//2 < vectdiff.y < min(nshape.size.y,self.size.y)//2:
+                self.pos = Vector2(nshape.pos.x + self.size.x, nshape.pos.y)
+            elif vectdiff.x > 0 and -min(nshape.size.y,self.size.y)//2 < vectdiff.y < min(nshape.size.y,self.size.y)//2:
+                self.pos = Vector2(nshape.pos.x - self.size.x, nshape.pos.y)
+            elif vectdiff.y < 0:
+                self.pos = Vector2(nshape.pos.x, nshape.pos.y + self.size.y)
+            elif vectdiff.y > 0:
+                self.pos = Vector2(nshape.pos.x, nshape.pos.y - self.size.y)
+    
+    def nearest(self,shapeslist,radius=50):
         nearestshape,distance = None,radius+1
-        for shape in shapes:
-            if (shape.pos - self.pos).normalize() < distance:
-                nearestshape,distance = shape,(shape.pos - self.pos).normalize()
-        return nearestshape"""
+        for shape in shapeslist:
+            if shape != self:
+                length = ((shape.pos.x - self.pos.x)**2+(shape.pos.y - self.pos.y)**2)**0.5
+                if length < distance:
+                    nearestshape,distance = shape,length
+        #print(length)
+        return nearestshape
 
 
-class Shape(Moveable_element):
+class Shape(MoveableElement):
     def __init__(self,pos,size,color=(100,0,0)) -> None:
-        super().__init__(pos)
+        color = RGB(color)
+        super().__init__(pos,size,color)
         self.pos,self.size,self.color = pos,size,color
         self.isLocked = False
         self.draggingPanel = False
-        self.barFirstClickPos = Vector2.ZERO()
+        self.FirstClickPos = Vector2.ZERO()
 
     def draw(self,screen):
-        pygame.draw.rect(screen, self.color, (self.pos.x, self.pos.y, self.size.x, self.size.y))
+        pygame.draw.rect(screen, self.color.value, (self.pos.x, self.pos.y, self.size.x, self.size.y))
     
 class Group:
     pass
