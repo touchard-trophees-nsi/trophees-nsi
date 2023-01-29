@@ -4,6 +4,7 @@ from scripts.cursor import cursor
 from scripts.events import update_event
 from scripts.math.vector2 import Vector2, vectorize
 from scripts.ui.panel import Panel, TextPanel
+from scripts.ui.grid import grid
 
 IS_DEV = False
 MAX_FPS = 60
@@ -59,6 +60,8 @@ while True:
         panel.update(panels)
 
     # ----- drawing ----- #
+    grid(61,(40,40,40))
+    grid(181,(200,200,200))
     for panel in panels:
         panel.draw(screen)
 
