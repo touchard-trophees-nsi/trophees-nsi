@@ -60,8 +60,8 @@ while True:
         panel.update(panels)
 
     # ----- drawing ----- #
-    grid(61,(40,40,40))
-    grid(181,(200,200,200))
+    grid(61,(20,20,20))
+    grid(181,(80,80,80))
     for panel in panels:
         panel.draw(screen)
 

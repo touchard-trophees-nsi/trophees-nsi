@@ -14,6 +14,7 @@ class Selectable:
         self.isFrozen = False
         self.isHovered = False
         self.isActive = False
+        self.isPressed = False
         self.keepActivity = keepActivity
         #
         self.continousClick = False
@@ -28,7 +29,7 @@ class Selectable:
         if cursor.pos.x>=self.pos.x and cursor.pos.x<=self.pos.x+self.width and cursor.pos.y>=self.pos.y and cursor.pos.y<=self.pos.y+self.height and not self.isFrozen:
             self.isHovered = True
             if cursor.eventType=='left' and cursor.isClicking:
-                self.isActive = True
+                self.isPressed = True
                 cursor.selectedElement = self
                 self.onClick()
                 self.continousClick = True
@@ -37,6 +38,9 @@ class Selectable:
                     self.isActive = False
                     if cursor.selectedElement==self:
                         cursor.selectedElement = None
+                if self.isPressed:
+                    self.isPressed = False
+                    self.isActive = True
             if cursor.isReleasing:
                 self.continousClick = False
                 self.onRelease()

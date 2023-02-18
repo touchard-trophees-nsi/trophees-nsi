@@ -4,6 +4,8 @@ from scripts.math.vector2 import Vector2
 from scripts.ui.selectable import Selectable, defaultPalette
 from scripts.ui.label import Label
 from scripts.ui.labelHighlighting.coloredLabel import ColoredLabel
+from scripts.ui.labelHighlighting.keywords import specialChars
+from modules.pyperclip.src.pyperclip.__init__ import *
 
 table = 'abcdefghijklmnopqrstuvwxyz\
         ABCDEFGHIJKLMNOPQRSTUVWXYZ\
@@ -28,10 +30,22 @@ class TextEntry(Selectable):
         #
         self.content = [self.text]
         self.selection = ''
+        self.isSelecting = False
         #
         self.cursor_pos = Vector2(0,0)
         self.onClickPos = Vector2(-1,-1)
         self.onReleasePos = Vector2(-1,-1)
+
+    def clipboard_copy(self):
+        copy(self.selection)
+
+    def clipboard_paste(self):
+        sliced = list(paste())
+        for i in range(len(sliced)):
+            if sliced[i] == '\n':
+                self.add_return()
+            else:
+                self.add_char(sliced[i])
 
     def cursor_goto_x0(self):
         self.cursor_pos.x = 0
@@ -49,7 +63,14 @@ class TextEntry(Selectable):
             self.displayedLines[0] -= 1
             self.displayedLines[1] -= 1
 
-    def move_line(self, step):
+    def move_line(self, step, shift=False):
+        if shift:
+            if self.isSelecting==False:
+                self.isSelecting = True
+                self.onClickPos.x, self.onClickPos.y = self.cursor_pos.x, self.cursor_pos.y
+        else:
+            cursor.selectedElement.clear_selection()
+
         if step >= 0:
             if self.cursor_pos.y+step<len(self.content):
                 if self.cursor_pos.x>len(self.content[self.cursor_pos.y+step]) and len(self.content[self.cursor_pos.y])>len(self.content[self.cursor_pos.y+step]):
@@ -71,6 +92,10 @@ class TextEntry(Selectable):
         # ----- #
         self.focus_on_cursor()
 
+        if shift:
+            self.onReleasePos.x, self.onReleasePos.y = self.cursor_pos.x, self.cursor_pos.y
+            self.update_selection()
+
         '''
         if self.cursor_pos.y+step>=0 and self.cursor_pos.y+step<len(self.content):
             if len(self.content[self.cursor_pos.y])>len(self.content[self.cursor_pos.y+step]):
@@ -82,35 +107,61 @@ class TextEntry(Selectable):
                 self.cursor_pos.y += step
         '''
 
-    def move_cursor(self, step):
-        # MOVING CURSOR ALONG CHARACTERS
-        self.cursor_pos.x += step
-        if self.cursor_pos.x<0 and self.cursor_pos.y>0:
-            self.cursor_pos.y -= 1
-            self.cursor_goto_x0() ; self.cursor_goto_lastx()
-        elif self.cursor_pos.x<0 and self.cursor_pos.y==0:
-            self.cursor_pos.x = 0
-        elif self.cursor_pos.x>len(self.content[self.cursor_pos.y]):
-            if self.cursor_pos.y<len(self.content)-1:
-                self.cursor_pos.y += 1
-                self.cursor_goto_x0()
+    def move_cursor(self, step, shift=False, ctrl=False):
+        if shift:
+            if self.isSelecting==False:
+                self.isSelecting = True
+                self.onClickPos.x, self.onClickPos.y = self.cursor_pos.x, self.cursor_pos.y
+        else:
+            cursor.selectedElement.clear_selection()
+
+        def _move():
+            # MOVING CURSOR ALONG CHARACTERS
+            self.cursor_pos.x += step
+            if self.cursor_pos.x<0 and self.cursor_pos.y>0:
+                self.cursor_pos.y -= 1
+                self.cursor_goto_x0() ; self.cursor_goto_lastx()
+            elif self.cursor_pos.x<0 and self.cursor_pos.y==0:
+                self.cursor_pos.x = 0
+            elif self.cursor_pos.x>len(self.content[self.cursor_pos.y]):
+                if self.cursor_pos.y<len(self.content)-1:
+                    self.cursor_pos.y += 1
+                    self.cursor_goto_x0()
+                else:
+                    self.cursor_pos.x=len(self.content[self.cursor_pos.y])
+
+            # HORIZONTAL SCROLLING
+            if self.cursor_pos.x<self.displayedChars[0]:
+                self.displayedChars[0]-=1
+                self.displayedChars[1]-=1
+            elif self.cursor_pos.x>self.displayedChars[1]:
+                self.displayedChars[0]+=1
+                self.displayedChars[1]+=1
+            self.focus_on_cursor()
+
+        if ctrl: # if control mode enabled, move cursor as long as no special character is encountered
+            breakpoint=0
+            if self.cursor_pos.x>0 and (self.cursor_pos.y>0 or self.cursor_pos.x>0) and self.content[self.cursor_pos.y][self.cursor_pos.x-1] not in specialChars:
+                while self.content[self.cursor_pos.y][self.cursor_pos.x-1] not in specialChars:
+                    breakpoint += 1
+                    _move()
+                    if self.cursor_pos.x<=0 or breakpoint>1000: break
             else:
-                self.cursor_pos.x=len(self.content[self.cursor_pos.y])
+                _move()
+        else:
+            _move()
 
-        # HORIZONTAL SCROLLING
-        if self.cursor_pos.x<self.displayedChars[0]:
-            self.displayedChars[0]-=1
-            self.displayedChars[1]-=1
-        elif self.cursor_pos.x>self.displayedChars[1]:
-            self.displayedChars[0]+=1
-            self.displayedChars[1]+=1
-        self.focus_on_cursor()
+        if shift:
+            self.onReleasePos.x, self.onReleasePos.y = self.cursor_pos.x, self.cursor_pos.y
+            self.update_selection()
 
-    def backspace(self):
+    def backspace(self, ctrl=False):
+        if ctrl:
+            self.move_cursor(-1, shift=True, ctrl=True)
         n_of_loops = 1
         if len(self.content[self.cursor_pos.y])>=3 and self.content[self.cursor_pos.y][self.cursor_pos.x-1]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-2]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-3]==' ':
             n_of_loops = 3
-        if self.selection != '':
+        if self.isSelecting and self.selection != '':
             if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
                 self.cursor_pos = self.onClickPos
             n_of_loops = len(self.selection)+abs(self.onClickPos.y-self.onReleasePos.y)
@@ -139,7 +190,7 @@ class TextEntry(Selectable):
 
     def add_char(self, unicode, isManual=False):
         # DELETE EVERYTHING IN SELECTION
-        if self.selection != '':
+        if self.isSelecting and self.selection != '':
             if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
                 self.cursor_pos = self.onClickPos
             self.backspace() # backspace only once since text is selected
@@ -163,7 +214,7 @@ class TextEntry(Selectable):
         self.focus_on_cursor()
 
     def base_add_return(self):
-        if self.selection != '':
+        if self.isSelecting and self.selection != '':
             if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
                 self.cursor_pos = self.onClickPos
             self.backspace() # backspace only once since text is selected
@@ -204,6 +255,7 @@ class TextEntry(Selectable):
         self.onClickPos = Vector2(-1,-1)
         self.onReleasePos = Vector2(-1,-1)
         self.selection = ''
+        self.isSelecting = False
 
     def update_selection(self):
         try:
@@ -214,10 +266,12 @@ class TextEntry(Selectable):
                     for i in range(self.onReleasePos.y, self.onClickPos.y+1):
                         if i == self.onReleasePos.y:
                             self.selection += self.content[i][self.onReleasePos.x:]
+                            self.selection += '\n'
                         elif i == self.onClickPos.y:
                             self.selection += self.content[i][:self.onClickPos.x]
                         else:
                             self.selection += self.content[i]
+                            self.selection += '\n'
                 elif self.onClickPos.y<self.onReleasePos.y:
                     # SELECTION DOWN
                     for i in range(self.onClickPos.y, self.onReleasePos.y+1):
@@ -225,13 +279,15 @@ class TextEntry(Selectable):
                             self.selection += self.content[i][:self.onReleasePos.x]
                         elif i == self.onClickPos.y:
                             self.selection += self.content[i][self.onClickPos.x:]
+                            self.selection += '\n'
                         else:
                             self.selection += self.content[i]
+                            self.selection += '\n'
                 elif self.onClickPos.x>self.onReleasePos.x:
                     self.selection = self.content[self.onClickPos.y][self.onReleasePos.x:self.onClickPos.x]
                 else:
                     self.selection = self.content[self.onClickPos.y][self.onClickPos.x:self.onReleasePos.x]
-        except:pass
+        except:print('Selectable.TextEntry error in update_selection(self)')
 
     def update(self):
         self.base_update()
@@ -243,7 +299,7 @@ class TextEntry(Selectable):
         if self.cursor_pos.y < 0: self.cursor_pos.y=0
         if self.displayedLines[0] < 0:
             self.displayedLines = [0, (self.height-self.labelOffset.y)//VERTICAL_SPACE]
-        if self.selection != '':
+        if self.isSelecting and self.selection != '':
             cursor.selectedElement = self
 
     def cursor2text_pos(self):
@@ -262,6 +318,7 @@ class TextEntry(Selectable):
 
     def onClick(self):
         self.onClickPos = self.cursor2text_pos()
+        self.isSelecting = True
 
     def onContinuousClick(self):
 
@@ -276,7 +333,7 @@ class TextEntry(Selectable):
         pygame.draw.rect(screen, tuple(self.color), (self.pos.x, self.pos.y, self.width, self.height))
         # drawing selection highlight
         try:
-            if self.onReleasePos.isPositive() and self.onClickPos!=self.onReleasePos:
+            if self.isSelecting:
                 if self.onClickPos.y>self.onReleasePos.y:
                     # SELECTION UP
                     for i in range(self.onReleasePos.y, self.onClickPos.y+1):
@@ -299,7 +356,7 @@ class TextEntry(Selectable):
                     pygame.draw.rect(screen, HIGHLIGHT_COLOR, (self.pos.x+self.labelOffset.x+HORIZONTAL_SPACE*(self.onReleasePos.x-self.displayedChars[0]), self.pos.y+self.labelOffset.y+VERTICAL_SPACE*self.onReleasePos.y, (self.onClickPos.x-self.onReleasePos.x)*HORIZONTAL_SPACE, VERTICAL_SPACE))
                 else:
                     pygame.draw.rect(screen, HIGHLIGHT_COLOR, (self.pos.x+self.labelOffset.x+HORIZONTAL_SPACE*(self.onClickPos.x-self.displayedChars[0]), self.pos.y+self.labelOffset.y+VERTICAL_SPACE*(self.onClickPos.y), (self.onReleasePos.x-self.onClickPos.x)*HORIZONTAL_SPACE, VERTICAL_SPACE))
-        except:pass
+        except:print('Selectable.TextEntry error in draw(self, screen)')
         # drawing text
         for i in range(self.displayedLines[0], self.displayedLines[1]):
             if i < len(self.labels):
