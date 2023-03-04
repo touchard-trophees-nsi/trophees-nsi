@@ -30,13 +30,16 @@ class MoveableElement(Selectable):
         if nshape != None:
             vectdiff = nshape.pos - self.pos
             if vectdiff.x < 0 and -min(nshape.size.y,self.size.y)//2 < vectdiff.y < min(nshape.size.y,self.size.y)//2:
-                self.pos = Vector2(nshape.pos.x + self.size.x, nshape.pos.y)
+                self.pos = Vector2(nshape.pos.x + self.size.x , nshape.pos.y)
             elif vectdiff.x > 0 and -min(nshape.size.y,self.size.y)//2 < vectdiff.y < min(nshape.size.y,self.size.y)//2:
                 self.pos = Vector2(nshape.pos.x - self.size.x, nshape.pos.y)
             elif vectdiff.y < 0:
                 self.pos = Vector2(nshape.pos.x, nshape.pos.y + self.size.y)
             elif vectdiff.y > 0:
                 self.pos = Vector2(nshape.pos.x, nshape.pos.y - self.size.y)
+        gridspacing = 60 # Valeur actuelle de l'espacement des lignes de la grille
+        self.pos.x -= self.pos.x % gridspacing
+        self.pos.y -= self.pos.y % gridspacing
     
     def nearest(self,shapeslist,radius=50):
         nearestshape,distance = None,radius+1
@@ -45,7 +48,6 @@ class MoveableElement(Selectable):
                 length = ((shape.pos.x - self.pos.x)**2+(shape.pos.y - self.pos.y)**2)**0.5
                 if length < distance:
                     nearestshape,distance = shape,length
-        #print(length)
         return nearestshape
 
 
@@ -60,7 +62,3 @@ class Shape(MoveableElement):
 
     def draw(self,screen):
         pygame.draw.rect(screen, self.color.value, (self.pos.x, self.pos.y, self.size.x, self.size.y))
-    
-class Group:
-    pass
-

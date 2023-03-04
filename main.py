@@ -22,7 +22,7 @@ clock = pygame.time.Clock()
 
 # variables
 panels = [TextPanel(Vector2(0,0), Vector2(500,500))]
-shapes = [Shape(Vector2(50,50),Vector2(50,50))]
+shapes = [Shape(Vector2(50,50),Vector2(60,60))]
 
 # MAIN LOGIC
 while True:
