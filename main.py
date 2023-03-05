@@ -5,6 +5,8 @@ from scripts.events import update_event
 from scripts.math.vector2 import Vector2, vectorize
 from scripts.ui.panel import Panel, TextPanel
 from scripts.ui.grid import grid
+from scripts.ui.shapes import Shape
+from scripts.ui.shapesDrawer import updatedDrawer
 
 IS_DEV = False
 MAX_FPS = 60
@@ -20,6 +22,7 @@ clock = pygame.time.Clock()
 
 # variables
 panels = [TextPanel(Vector2(0,0), Vector2(500,500))]
+shapes = [Shape(Vector2(50,50),Vector2(60,60))]
 
 # MAIN LOGIC
 while True:
@@ -59,9 +62,18 @@ while True:
     for panel in panels:
         panel.update(panels)
 
+    # ----- shape updates ----- #
+    for shape in shapes:
+        shape.update(shapes)
+
+    updatedDrawer(shapes)
+    
     # ----- drawing ----- #
     grid(61,(20,20,20))
     grid(181,(80,80,80))
+    for shape in shapes:
+        shape.draw(screen)
+
     for panel in panels:
         panel.draw(screen)
 
