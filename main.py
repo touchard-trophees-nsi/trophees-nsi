@@ -66,14 +66,6 @@ while True:
     for shape in shapes:
         shape.update(shapes)
 
-    """
-    pos2 = (shapes[-1].pos.x,shapes[-1].pos.y)
-    pygame.draw.circle(screen,(200,200,200),pos2,60,width=2)
-    if shapes[-1].nearest(shapes,60) != None:
-        pos1 = (shapes[-1].nearest(shapes,60).pos.x,shapes[-1].nearest(shapes,60).pos.y)
-        pygame.draw.line(screen,(250,250,250),pos1,pos2)
-    screen.blit(pygame.font.Font(None, 18).render(str(cursor.selectedElement==shapes[0]), True, (150,150,150)),(100,40))
-    """
     updatedDrawer(shapes)
     
     # ----- drawing ----- #
