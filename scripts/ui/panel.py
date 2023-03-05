@@ -2,6 +2,7 @@ import pygame
 from scripts.ui.label import Label
 from scripts.ui.widgets.button import Button
 from scripts.ui.widgets.textEntry import TextEntry
+from scripts.ui.widgets.optimizedTextEntry import OptimizedTextEntry
 from scripts.math.vector2 import Vector2
 from scripts.math.camera import camera
 from scripts.graphics.color import RGB, gradient_palette
@@ -107,7 +108,6 @@ class Panel:
                             except:
                                 print('Error: unable to run panel code')
 
-
     def update_labels(self):
         for i in range(len(self.labels)):
             self.labels[i].position = self.pos+self.labelPosOffsets[i]
@@ -132,6 +132,17 @@ class TextPanel(Panel):
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
                            'runButton':Button(Vector2(self.pos.x+self.width-90, self.pos.y), Vector2(40,self.barHeight), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2], img=load_sprite('ui/runIcon')),
                            'textEntry':TextEntry(Vector2(self.pos.x, self.pos.y+self.barHeight),Vector2(int(int(self.width)), self.height-self.barHeight))}
+        self.componentPosOffsets = []
+        for comp in self.components.values():
+            self.componentPosOffsets.append(comp.pos-self.pos)
+
+class OTextPanel(Panel):
+    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Panel', font='RobotoMono-Regular'):
+        super().__init__(pos, dims, bgColor, barColor, name, font)
+        colors = gradient_palette(self.barColor, step=-15)
+        self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
+                           'runButton':Button(Vector2(self.pos.x+self.width-90, self.pos.y), Vector2(40,self.barHeight), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2], img=load_sprite('ui/runIcon')),
+                           'textEntry':OptimizedTextEntry(Vector2(self.pos.x, self.pos.y+self.barHeight),Vector2(int(int(self.width)), self.height-self.barHeight))}
         self.componentPosOffsets = []
         for comp in self.components.values():
             self.componentPosOffsets.append(comp.pos-self.pos)

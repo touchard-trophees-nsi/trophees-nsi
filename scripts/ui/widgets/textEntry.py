@@ -11,7 +11,7 @@ table = 'abcdefghijklmnopqrstuvwxyz\
         ABCDEFGHIJKLMNOPQRSTUVWXYZ\
         0123456789\
         ,;.:+-*/=|\\?!@$£%&"\'_()[]{}<>\
-        éÉèÈêÊëËôÔçÇù¤µ°§²#'
+        éÉèÈêÊëËôÔçÇù¤µ°§²#^¨'
 
 autoplacableChars = '\'"[{('
 autoplacedChars = '\'"]})'
@@ -46,6 +46,15 @@ class TextEntry(Selectable):
                 self.add_return()
             else:
                 self.add_char(sliced[i])
+
+    def select_all(self):
+        print('selected all')
+        self.isSelecting = True
+        self.onClickPos.x, self.onClickPos.y = 0,0
+        self.onReleasePos.x, self.onReleasePos.y = len(self.content[-1]), len(self.content)-1
+        self.cursor_pos = self.onReleasePos
+        self.focus_on_cursor()
+        self.update_selection()
 
     def cursor_goto_x0(self):
         self.cursor_pos.x = 0
@@ -96,6 +105,7 @@ class TextEntry(Selectable):
             self.onReleasePos.x, self.onReleasePos.y = self.cursor_pos.x, self.cursor_pos.y
             self.update_selection()
 
+        self.update_labels()
         '''
         if self.cursor_pos.y+step>=0 and self.cursor_pos.y+step<len(self.content):
             if len(self.content[self.cursor_pos.y])>len(self.content[self.cursor_pos.y+step]):
@@ -132,11 +142,14 @@ class TextEntry(Selectable):
 
             # HORIZONTAL SCROLLING
             if self.cursor_pos.x<self.displayedChars[0]:
+                print('test')
                 self.displayedChars[0]-=1
                 self.displayedChars[1]-=1
+                print(self.displayedChars, self.cursor_pos)
             elif self.cursor_pos.x>self.displayedChars[1]:
                 self.displayedChars[0]+=1
                 self.displayedChars[1]+=1
+                print(self.displayedChars, self.cursor_pos)
             self.focus_on_cursor()
 
         if ctrl: # if control mode enabled, move cursor as long as no special character is encountered
@@ -154,6 +167,7 @@ class TextEntry(Selectable):
         if shift:
             self.onReleasePos.x, self.onReleasePos.y = self.cursor_pos.x, self.cursor_pos.y
             self.update_selection()
+        self.update_labels()
 
     def backspace(self, ctrl=False):
         if ctrl:
@@ -162,9 +176,9 @@ class TextEntry(Selectable):
         if len(self.content[self.cursor_pos.y])>=3 and self.content[self.cursor_pos.y][self.cursor_pos.x-1]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-2]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-3]==' ':
             n_of_loops = 3
         if self.isSelecting and self.selection != '':
-            if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
+            if self.onReleasePos.y<self.onClickPos.y or (self.onReleasePos.y==self.onClickPos.y and self.onReleasePos.x<=self.onClickPos.x):
                 self.cursor_pos = self.onClickPos
-            n_of_loops = len(self.selection)+abs(self.onClickPos.y-self.onReleasePos.y)
+            n_of_loops = len(self.selection)+abs(self.onClickPos.y-self.onReleasePos.y)-1
             self.clear_selection()
         for i in range(n_of_loops):
             if self.cursor_pos.y>0 and self.cursor_pos.x==0:
@@ -250,6 +264,7 @@ class TextEntry(Selectable):
                 coefficient = abs(self.displayedLines[0]-i)
                 self.labels[i].position = Vector2(int(self.pos.x+self.labelOffset.x), int(self.pos.y+self.labelOffset.y+VERTICAL_SPACE*coefficient))
                 self.labels[i].text = self.content[i]
+                self.labels[i].refresh(self.content[i][self.displayedChars[0]:self.displayedChars[1]])
 
     def clear_selection(self):
         self.onClickPos = Vector2(-1,-1)
@@ -292,7 +307,7 @@ class TextEntry(Selectable):
     def update(self):
         self.base_update()
         self.update_scrolling()
-        self.update_labels()
+        #self.update_labels()
         self.update_selection()
 
         if self.cursor_pos.x < 0: self.cursor_pos.x=0
@@ -308,20 +323,26 @@ class TextEntry(Selectable):
             relative_pos = mouse_pos-(self.pos+self.labelOffset)
             relative_pos.x = relative_pos.x//HORIZONTAL_SPACE + self.displayedChars[0]
             relative_pos.y = relative_pos.y//VERTICAL_SPACE + self.displayedLines[0]
-            self.cursor_pos = Vector2(relative_pos.x, relative_pos.y)
-            if self.cursor_pos.y>=len(self.content):
-                self.cursor_pos.y = len(self.content)-1
-                self.cursor_goto_x0() ; self.cursor_goto_lastx()
-            if self.cursor_pos.x>=len(self.content[self.cursor_pos.y]):
-                self.cursor_goto_x0() ; self.cursor_goto_lastx()
-            return self.cursor_pos
+            cursor_pos = Vector2(relative_pos.x, relative_pos.y)
+            if cursor_pos.y>=len(self.content):
+                cursor_pos.y = len(self.content)-1
+                cursor_pos.x=0
+                while cursor_pos.x < len(self.content[cursor_pos.y]):
+                    cursor_pos.x += 1
+            if cursor_pos.x>=len(self.content[cursor_pos.y]):
+                cursor_pos.x=0
+                while cursor_pos.x < len(self.content[cursor_pos.y]):
+                    cursor_pos.x += 1
+            return cursor_pos
+        return Vector2(0,0)
 
     def onClick(self):
-        self.onClickPos = self.cursor2text_pos()
+        self.cursor_pos = self.cursor2text_pos()
+        self.onClickPos = self.cursor_pos
         self.isSelecting = True
 
     def onContinuousClick(self):
-
+        self.cursor_pos = self.cursor2text_pos()
         self.onReleasePos = self.cursor2text_pos()
 
     def update_scrolling(self):
