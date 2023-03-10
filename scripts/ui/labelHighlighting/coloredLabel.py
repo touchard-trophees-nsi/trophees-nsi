@@ -12,7 +12,12 @@ loaded_fonts = {}
 class ColoredLabel(Label):
     def __init__(self, position, size=13, color=(255,255,255), text='', centered=False, font='RobotoMono-Regular'):
         super().__init__(position, size, color, text, centered, font)
-    def draw(self, surface, text=''):
+        self.oldText = None
+        self.texts2draw = []
+
+    def refresh(self, text=''):
+        self.oldText = self.text
+        self.texts2draw = []
         white_text = list(text)
 
         # --- HIGHLIGHT ON MULTIPLE CHARS --- #
@@ -39,8 +44,8 @@ class ColoredLabel(Label):
                 else:
                     highlight_comment[i] = ' '
                 highlight_str[i] = ' '
-        self.draw_text(surface, ''.join(highlight_str), color=(255,217,52))
-        self.draw_text(surface, ''.join(highlight_comment), color=(92,99,112))
+        self.texts2draw.append([''.join(highlight_str), (255,217,52)])
+        self.texts2draw.append([''.join(highlight_comment), (92,99,112)])
 
         # ---------- KEYWORDS AND CHARS ---------- #
         for color_, keywords in coloredKeywords.items():
@@ -53,7 +58,7 @@ class ColoredLabel(Label):
                         white_text[i] = ' '
                     else:
                         new_text += ' '
-                self.draw_text(surface, new_text, color=color_)
+                self.texts2draw.append([new_text, color_])
         for color_, chars in coloredCharacters.items():
             for char in chars:
                 indexes = char2indexes(white_text, char)
@@ -64,8 +69,8 @@ class ColoredLabel(Label):
                         white_text[i] = ' '
                     else:
                         new_text += ' '
-                self.draw_text(surface, new_text, color=color_)
-        
+                self.texts2draw.append([new_text, color_])
+
         # --- FUNCTION AND CLASS HIGHLIGHTING --- #
         wordIndexes = []
         for i in range(len(white_text)):
@@ -77,17 +82,20 @@ class ColoredLabel(Label):
                         white_text[i] = ' '
                     else:
                         new_text += ' '
-                self.draw_text(surface, new_text, color=(129,249,0))
+                self.texts2draw.append([new_text, (129,249,0)])
             elif white_text[i] in specialChars:
                 wordIndexes = []
             else:
                 word += white_text[i]
                 wordIndexes += [i]
-            
-        
+
+
         # --- CLASSIC TEXT --- #
-        self.draw_text(surface, ''.join(white_text), color=self.color)
-        
+        self.texts2draw.append([''.join(white_text), self.color])
+        for item in self.texts2draw:
+            if item[0].isspace() or item[0]=='':
+                self.texts2draw.remove(item)
+
         '''
         # -------------- #
         labelWords = text.split(' ')
@@ -104,7 +112,7 @@ class ColoredLabel(Label):
                 self.draw_text(surface, text=new_text, color=color_)
             if counter >= len(coloredKeywords):
                 self.draw_text(surface, text=new_text, color=self.color)
-        
+
         labelChars = list(text)
         for char in labelChars:
             new_text = list(text)
@@ -117,6 +125,17 @@ class ColoredLabel(Label):
                 if char in characters:
                     self.draw_text(surface, text=new_text, color=color_)
         '''
+
+    def draw(self, surface, text=''):
+        if self.oldText != self.text:
+            self.refresh(text)
+        #
+        for item in self.texts2draw:
+            if item[0].isspace() or item[0]=='':
+                self.texts2draw.remove(item)
+        for item in self.texts2draw:
+            self.draw_text(surface, item[0], item[1])
+
     def draw_text(self, surface, text='', color=(255,255,255)):
         if text != '':
             font = self.load_font()
