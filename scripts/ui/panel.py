@@ -107,7 +107,6 @@ class Panel:
                             except:
                                 print('Error: unable to run panel code')
 
-
     def update_labels(self):
         for i in range(len(self.labels)):
             self.labels[i].position = self.pos+self.labelPosOffsets[i]
