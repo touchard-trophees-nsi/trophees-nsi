@@ -1,0 +1,7 @@
+main.py
+panel.py
+/sprites/
+NEW FILE dev.py, finish graph drawing
+
+# nav bar
+run - components - ide - home

@@ -1,12 +1,15 @@
 # TO-DO
 # add maintained key press support for all keys, including BACKSPACE and RETURN
 # deletion when selection from up to down is 1 char too much
+# deletion when selection from up to down is 1 too much
 # deletion when selection from down to up bug
+# optimizing huge amounts of lines
 # panel order management depending on last clicked panel
 # add numbers highlight, string highlighting should be ended with couples ('' or "" and not '" or "')
 # add suport for syntax highlighting when horizontally scrolling (strings & comments)
 # cursor can't be drawn further than the panel boundaries
 # selection highlight can't be drawn further than the panel boundaries
+# add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
 
 # DONE : Ctrl-x should copy (and not juste delete)
 # DONE : add Ctrl-A
@@ -19,11 +22,13 @@ import pygame, sys
 from scripts.cursor import cursor
 from scripts.events import update_event, keys, directional_key_update
 from scripts.math.vector2 import Vector2, vectorize
-from scripts.ui.panel import Panel, TextPanel
+from scripts.math.camera import camera
+from scripts.ui.panel import Panel, TextPanel, TopNavPanel
 from scripts.ui.label import Label
 from scripts.ui.grid import grid
 from scripts.ui.shapes import Shape
 from scripts.ui.shapesDrawer import updatedDrawer
+from scripts.dev import dev_update_and_draw, dev_update
 
 IS_DEV = False
 MAX_FPS = 60
@@ -38,16 +43,18 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 
 # variables
-panels = [TextPanel(Vector2(0,0), Vector2(500,500))]
+panels = [TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 fpsLabel = Label(Vector2(0,-4), color=(0,255,0))
 shapes = [Shape(Vector2(50,50),Vector2(60,60))]
+lastPressed = None
 
 # MAIN LOGIC
 while True:
     # --- frame init --- #
     screen.fill((0,0,0))
     cursor.pos = vectorize(pygame.mouse.get_pos())
-    current_fps = round(clock.get_fps(),1)
+    currentFps = round(clock.get_fps(),1)
+    dev_update(currentFps, MAX_FPS)
 
     # ----- instance updates ----- #
     cursor.update()
@@ -76,6 +83,13 @@ while True:
                 if 'Selectable.TextEntry' in cursor.selectedElement.get_type() and cursor.selectedElement.displayedLines[0]<len(cursor.selectedElement.content)-1:
                     cursor.selectedElement.displayedLines[0]+=1
                     cursor.selectedElement.displayedLines[1]+=1
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_F3:
+                print(IS_DEV, IS_DEV==False, IS_DEV==True)
+                IS_DEV = False if IS_DEV==False else True
+            lastPressed = event.unicode
+        elif event.type == pygame.KEYUP:
+            lastPressed = None
 
     # ------- maintained key presses ------- #
     for key, values in keys.items():
@@ -83,14 +97,14 @@ while True:
             directional_key_update(key, values[1], values[2])
             keys[key][0] += 1
 
-    # ----- panel updates ----- #
-    for panel in panels:
-        panel.update(panels)
-
     # ----- shape updates ----- #
     for shape in shapes:
         shape.update(shapes)
     updatedDrawer(shapes)
+
+    # ----- panel updates ----- #
+    for panel in panels:
+        panel.update(panels)
 
     # ----- drawing ----- #
     grid(61,(20,20,20))
@@ -99,8 +113,9 @@ while True:
         panel.draw(screen)
     for shape in shapes:
         shape.draw(screen)
-    fpsLabel.text = str(current_fps)
-    fpsLabel.draw(screen, fpsLabel.text)
+
+    if IS_DEV==True:
+        dev_update_and_draw(screen, currentFps, MAX_FPS, lastPressed)
 
     # --- screen refreshing ---#
     pygame.display.update()
