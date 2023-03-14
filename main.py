@@ -3,11 +3,8 @@
 # deletion when selection from up to down is 1 char too much
 # deletion when selection from up to down is 1 too much
 # deletion when selection from down to up bug
-# optimizing huge amounts of lines
 # panel order management depending on last clicked panel
-# add numbers highlight, string highlighting should be ended with couples ('' or "" and not '" or "')
 # add suport for syntax highlighting when horizontally scrolling (strings & comments)
-# cursor can't be drawn further than the panel boundaries
 # selection highlight can't be drawn further than the panel boundaries
 # add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
 
@@ -16,6 +13,8 @@
 # DONE : selection shouldn't be removed when clicking with the cursor further than the line span
 # DONE : maintained arrow press for faster navigation
 # DONE : huge optimization for ColoredLabel class
+# DONE : optimizing huge amounts of lines
+# DONE : cursor can't be drawn further than the panel boundaries
 
 # MODULES
 import pygame, sys
@@ -79,10 +78,12 @@ while True:
                 if 'Selectable.TextEntry' in cursor.selectedElement.get_type() and cursor.selectedElement.displayedLines[0]>0:
                     cursor.selectedElement.displayedLines[0]-=1
                     cursor.selectedElement.displayedLines[1]-=1
+                    cursor.selectedElement.update_labels()
             elif event.button==5: # scroll down
                 if 'Selectable.TextEntry' in cursor.selectedElement.get_type() and cursor.selectedElement.displayedLines[0]<len(cursor.selectedElement.content)-1:
                     cursor.selectedElement.displayedLines[0]+=1
                     cursor.selectedElement.displayedLines[1]+=1
+                    cursor.selectedElement.update_labels()
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_F3:
                 print(IS_DEV, IS_DEV==False, IS_DEV==True)
