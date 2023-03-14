@@ -18,7 +18,7 @@ autoplacedChars = '\'"]})'
 
 VERTICAL_SPACE = 15+5 # space between lines
 HORIZONTAL_SPACE = Label(Vector2(0,0), size=15, text='_').get_width()
-HIGHLIGHT_COLOR = (78, 177, 252)
+HIGHLIGHT_COLOR = (39, 85, 126) #(78, 177, 252)
 
 class TextEntry(Selectable):
     def __init__(self, pos, dims, idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[2], text=''):

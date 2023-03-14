@@ -92,6 +92,9 @@ class ColoredLabel(Label):
 
         # --- CLASSIC TEXT --- #
         self.texts2draw.append([''.join(white_text), self.color])
+        for item in self.texts2draw:
+            if item[0].isspace() or item[0]=='':
+                self.texts2draw.remove(item)
 
         '''
         # -------------- #
@@ -126,6 +129,10 @@ class ColoredLabel(Label):
     def draw(self, surface, text=''):
         if self.oldText != self.text:
             self.refresh(text)
+        #
+        for item in self.texts2draw:
+            if item[0].isspace() or item[0]=='':
+                self.texts2draw.remove(item)
         for item in self.texts2draw:
             self.draw_text(surface, item[0], item[1])
 
