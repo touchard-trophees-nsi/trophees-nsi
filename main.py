@@ -25,8 +25,7 @@ from scripts.math.camera import camera
 from scripts.ui.panel import Panel, TextPanel, TopNavPanel
 from scripts.ui.label import Label
 from scripts.ui.grid import grid
-from scripts.ui.shapes import Shape
-from scripts.ui.shapesDrawer import updatedDrawer
+from scripts.ui.shapesDrawer import updateDrawer
 from scripts.dev import dev_update_and_draw, dev_update
 
 IS_DEV = False
@@ -44,7 +43,7 @@ clock = pygame.time.Clock()
 # variables
 panels = [TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 fpsLabel = Label(Vector2(0,-4), color=(0,255,0))
-shapes = [Shape(Vector2(50,50),Vector2(60,60))]
+shapes = []
 lastPressed = None
 
 # MAIN LOGIC
@@ -101,7 +100,7 @@ while True:
     # ----- shape updates ----- #
     for shape in shapes:
         shape.update(shapes)
-    updatedDrawer(shapes)
+    shapes = updateDrawer(shapes)
 
     # ----- panel updates ----- #
     for panel in panels:
