@@ -3,6 +3,7 @@ from scripts.math.vector2 import Vector2
 from scripts.cursor import cursor
 from scripts.ui.selectable import Selectable
 from scripts.graphics.color import RGB
+from scripts.version import PYGAME_IS_MODERN_VERSION
 
 class MoveableElement(Selectable):
     def __init__(self,pos,size,color):
@@ -23,7 +24,7 @@ class MoveableElement(Selectable):
             self.FirstClickPos = Vector2.ZERO()
         if self.FirstClickPos != Vector2.ZERO():
             self.pos = Vector2(cursor.pos.x+self.FirstClickPos.x, cursor.pos.y+self.FirstClickPos.y)
-        
+
     def onRelease(self):
         """Lorsque la forme est laché, elle s'aligne avec la grille,
         si la case sous la pièce n'est vide alors la forme retroune à son emplacement initial"""
@@ -50,7 +51,7 @@ class MoveableElement(Selectable):
 
     def onClick(self):
         self.lastpos = self.pos
-    
+
 class Shape(MoveableElement):
     def __init__(self,pos,size=Vector2(60,60),color=(100,0,0),form="square",direc=0):
         if type(color) == tuple: color = RGB(color)
@@ -61,7 +62,7 @@ class Shape(MoveableElement):
         self.FirstClickPos = Vector2.ZERO()
         self.form = form
         self.direction = direc
-    
+
     def __eq__(self,object):
         if isinstance(object, Shape):
             return self.pos.x == object.pos.x and self.pos.y == object.pos.y and self.size == object.size
@@ -71,13 +72,19 @@ class Shape(MoveableElement):
 
     def draw(self,screen):
         if self.continousClick and self.placeavail():
-            pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2, self.posgrid()[1]+2, self.size.x-4, self.size.y-4), 2,10)
+            if PYGAME_IS_MODERN_VERSION: # la ligne ci-dessous renvoie une erreur si la version de pygame est inférieure à 2.0.1, donc on dessine un carré sans arrondi pour les versions antérieures
+                pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2, self.posgrid()[1]+2, self.size.x-4, self.size.y-4), 2, 10)
+            else:
+                pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2, self.posgrid()[1]+2, self.size.x-4, self.size.y-4), 2)
         if self.form == "square":
             pygame.draw.rect(screen, self.color.value, (self.pos.x, self.pos.y, self.size.x, self.size.y))
         elif self.form == "triangle":
             pygame.draw.polygon(screen, self.color.value, [(self.pos.x, self.pos.y), (self.pos.x + self.size.x, self.pos.y), (self.pos.x, self.size.y + self.pos.y),(self.pos.x + self.size.x, self.size.y + self.pos.y),(self.pos.x, self.pos.y), (self.pos.x + self.size.x, self.pos.y)][self.direction:self.direction+3], 0)
         elif self.form == "circle":
-            pygame.draw.circle(screen, self.color.value, ((self.pos.x+self.size.x,self.pos.x)[self.direction%2], (self.pos.y+self.size.y,self.pos.y)[self.direction//2]), self.size.x, 0, draw_top_left=(True,False,False,False)[self.direction],draw_top_right=(False,True,False,False)[self.direction],draw_bottom_left=(False,False,True,False)[self.direction],draw_bottom_right=(False,False,False,True)[self.direction])
+            if PYGAME_IS_MODERN_VERSION: #renvoie une erreur si la version de pygame < 2.0.1, donc on dessine un carré au lieu d'un cercle pour les versions antérieures
+                pygame.draw.circle(screen, self.color.value, ((self.pos.x+self.size.x,self.pos.x)[self.direction%2], (self.pos.y+self.size.y,self.pos.y)[self.direction//2]), self.size.x, 0, draw_top_left=(True,False,False,False)[self.direction],draw_top_right=(False,True,False,False)[self.direction],draw_bottom_left=(False,False,True,False)[self.direction],draw_bottom_right=(False,False,False,True)[self.direction])
+            else:
+                pygame.draw.rect(screen, self.color.value, pygame.Rect(self.pos.x,self.pos.y, self.size.x, self.size.y))
 
         """
     _________triangle_________
