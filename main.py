@@ -1,5 +1,5 @@
 # TO-DO
-# add maintained key press support for all keys, including BACKSPACE and RETURN
+
 # deletion when selection from up to down is 1 char too much
 # deletion when selection from up to down is 1 too much
 # deletion when selection from down to up bug
@@ -8,6 +8,7 @@
 # selection highlight can't be drawn further than the panel boundaries
 # add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
 
+# DONE : add maintained key press support for all keys, including BACKSPACE and RETURN
 # DONE : Ctrl-x should copy (and not juste delete)
 # DONE : add Ctrl-A
 # DONE : selection shouldn't be removed when clicking with the cursor further than the line span
