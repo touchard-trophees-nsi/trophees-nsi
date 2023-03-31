@@ -5,16 +5,8 @@ from scripts.ui.selectable import Selectable, defaultPalette
 from scripts.ui.label import Label
 from scripts.ui.labelHighlighting.coloredLabel import ColoredLabel
 from scripts.ui.labelHighlighting.keywords import specialChars
+from lang.char_table import table, autoplacableChars, autoplacedChars
 from modules.pyperclip.src.pyperclip.__init__ import *
-
-table = 'abcdefghijklmnopqrstuvwxyz\
-        ABCDEFGHIJKLMNOPQRSTUVWXYZ\
-        0123456789\
-        ,;.:+-*/=|\\?!@$£%&"\'_()[]{}<>\
-        éÉèÈêÊëËôÔçÇù¤µ°§²#^¨'
-
-autoplacableChars = '\'"[{('
-autoplacedChars = '\'"]})'
 
 VERTICAL_SPACE = 15+5 # space between lines
 HORIZONTAL_SPACE = Label(Vector2(0,0), size=15, text='_').get_width()

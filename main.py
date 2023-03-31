@@ -1,5 +1,5 @@
 # TO-DO
-# add maintained key press support for all keys, including BACKSPACE and RETURN
+
 # deletion when selection from up to down is 1 char too much
 # deletion when selection from up to down is 1 too much
 # deletion when selection from down to up bug
@@ -8,6 +8,7 @@
 # selection highlight can't be drawn further than the panel boundaries
 # add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
 
+# DONE : add maintained key press support for all keys, including BACKSPACE and RETURN
 # DONE : Ctrl-x should copy (and not juste delete)
 # DONE : add Ctrl-A
 # DONE : selection shouldn't be removed when clicking with the cursor further than the line span
@@ -19,7 +20,7 @@
 # MODULES
 import pygame, sys
 from scripts.cursor import cursor
-from scripts.events import update_event, keys, directional_key_update
+from scripts.events import update_event, keys, key_update
 from scripts.math.vector2 import Vector2, vectorize
 from scripts.math.camera import camera
 from scripts.ui.panel import Panel, TextPanel, TopNavPanel
@@ -27,6 +28,7 @@ from scripts.ui.label import Label
 from scripts.ui.grid import grid
 from scripts.ui.shapesDrawer import updateDrawer
 from scripts.dev import dev_update_and_draw, dev_update
+from scripts.version import PYGAME_VERSION
 
 IS_DEV = False
 MAX_FPS = 60
@@ -60,7 +62,7 @@ while True:
     # ------- event handler ------- #
     for event in pygame.event.get():
         # KEY INPUTS
-        exec(update_event(event))
+        update_event(event)
 
         # MOUSE INPUTS
         cursor.isClicking -= 1 if cursor.isClicking > 0 else 0
@@ -94,7 +96,7 @@ while True:
     # ------- maintained key presses ------- #
     for key, values in keys.items():
         if values[0]>0:
-            directional_key_update(key, values[1], values[2])
+            key_update(key, values[1], values[2])
             keys[key][0] += 1
 
     # ----- shape updates ----- #
