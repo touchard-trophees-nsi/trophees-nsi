@@ -99,11 +99,11 @@ while True:
     # ----- shape updates ----- #
     for shape in shapes:
         shape.update(shapes)
-    shapes = updateDrawer(shapes)
+    #updateDrawer(shapes)
 
     # ----- panel updates ----- #
     for panel in panels:
-        panel.update(panels)
+        panel.update(panels, shapes)
 
     # ----- drawing ----- #
     grid(61,(20,20,20))

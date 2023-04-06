@@ -1,7 +1,8 @@
-import pygame
+import pygame, copy
 from scripts.ui.label import Label
 from scripts.ui.widgets.button import Button
 from scripts.ui.widgets.textEntry import TextEntry
+from scripts.ui.shapesDrawer import defaultShapes
 from scripts.math.vector2 import Vector2
 from scripts.math.camera import camera
 from scripts.graphics.color import RGB, gradient_palette
@@ -48,9 +49,9 @@ class Panel:
         self.isActive = not self.isActive if value==None else value
         self.outlineColor = self.outlineColorActive if self.isActive else self.outlineColorInactive
 
-    def update(self, panels):
+    def update(self, panels, shapes):
         self.update_physics(panels)
-        self.update_components(panels)
+        self.update_components(panels, shapes)
         self.update_labels()
 
     def update_physics(self, panels):
@@ -91,7 +92,7 @@ class Panel:
             if self.pos.y<0: self.pos.y=0
             if self.pos.y+2>camera.h: self.pos.y = camera.h-2
 
-    def update_components(self, panels):
+    def update_components(self, panels, shapes):
         for i in range(len(self.components.values())):
             comp = list(self.components.values())[i]
             comp.pos = self.componentPosOffsets[i]+self.pos
@@ -111,6 +112,12 @@ class Panel:
                                         exec(code)
                                     except:
                                         print('Error: unable to run panel code')
+                elif 'componentsButton' in self.components.keys() and comp==self.components['componentsButton']:
+                    panels.append(AddComponentPanel(Vector2(0,0), Vector2(400,365)))
+                else:
+                    for c in self.components.keys():
+                        if 'shape' in c and comp == self.components[c]:
+                            shapes.append(copy.copy(defaultShapes[int(c.replace('shape',''))]))
 
     def update_labels(self):
         for i in range(len(self.labels)):
@@ -158,3 +165,20 @@ class TopNavPanel(Panel):
 
     def get_type(self):
         return 'Panel.TopNavPanel'
+
+class AddComponentPanel(Panel):
+    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Ajouter un composant', font='RobotoMono-Regular', hasBar=True):
+        super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
+        colors = gradient_palette(self.barColor, step=-15)
+        self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
+                           'runButton':Button(Vector2(self.pos.x+self.width-90, self.pos.y), Vector2(40,self.barHeight), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2], img=load_sprite('ui/runIcon'))}
+
+        for i in range(len(defaultShapes)):
+            self.components['shape'+str(i)] = Button(Vector2(self.pos.x+10, self.pos.y+self.barHeight+32*i+10), Vector2(185, 27), text='Ajouter composant', textSize=13)
+
+        self.componentPosOffsets = []
+        for comp in self.components.values():
+            self.componentPosOffsets.append(comp.pos-self.pos)
+
+    def get_type(self):
+        return 'Panel.AddComponentPanel'
