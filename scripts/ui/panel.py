@@ -49,17 +49,17 @@ class Panel:
         self.outlineColor = self.outlineColorActive if self.isActive else self.outlineColorInactive
 
     def update(self, panels):
-        self.update_physics()
+        self.update_physics(panels)
         self.update_components(panels)
         self.update_labels()
 
-    def update_physics(self):
+    def update_physics(self, panels):
         if cursor.eventType != 'left':
             self.draggingPanel = False
 
         # Window dragging
         if cursor.pos.x>self.pos.x and cursor.pos.x<self.pos.x+self.barWidth and cursor.pos.y>self.pos.y and cursor.pos.y<self.pos.y+self.barHeight and not self.isLocked:
-            if cursor.eventType=='left':
+            if cursor.eventType=='left' and (cursor.selectedElement == None or cursor.selectedElement == self):
                 self.draggingPanel = True
                 if self.barFirstClickPos == Vector2.ZERO():
                     self.barFirstClickPos = Vector2(self.pos.x-cursor.pos.x, self.pos.y-cursor.pos.y)
@@ -71,9 +71,11 @@ class Panel:
         # Panel selection
         if cursor.pos.x>self.pos.x and cursor.pos.x<self.pos.x+self.width and cursor.pos.y>self.pos.y and cursor.pos.y<self.pos.y+self.height and not self.isLocked:
             self.isHovered = True
-            if cursor.eventType=='left' and cursor.isClicking:
+            if cursor.eventType=='left' and cursor.isClicking and (self.draggingPanel and cursor.selectedElement == None):
                 self.set_isActive(True)
                 cursor.selectedElement = self
+                panels.remove(self)
+                panels.append(self)
         else:
             self.isHovered = False
             if cursor.eventType=='left' and not(self.draggingPanel):
