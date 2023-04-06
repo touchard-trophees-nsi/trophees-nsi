@@ -15,7 +15,7 @@
 # DONE : cursor can't be drawn further than the panel boundaries
 
 # MODULES
-import pygame
+import pygame, sys
 from scripts.cursor import cursor
 from scripts.events import update_event, keys, key_update
 from scripts.math.vector2 import Vector2, vectorize
@@ -40,7 +40,7 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 
 # variables
-panels = [TextPanel(Vector2(100,0), Vector2(500,500)), TextPanel(Vector2(0,500), Vector2(500,500)), TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
+panels = [TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 fpsLabel = Label(Vector2(0,-4), color=(0,255,0))
 shapes = []
 lastPressed = None
@@ -99,11 +99,11 @@ while True:
     # ----- shape updates ----- #
     for shape in shapes:
         shape.update(shapes)
-    shapes = updateDrawer(shapes)
+    #updateDrawer(shapes)
 
     # ----- panel updates ----- #
     for panel in panels:
-        panel.update(panels)
+        panel.update(panels, shapes)
 
     # ----- drawing ----- #
     grid(61,(20,20,20))
