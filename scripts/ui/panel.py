@@ -114,6 +114,8 @@ class Panel:
                                         print('Error: unable to run panel code')
                 elif 'componentsButton' in self.components.keys() and comp==self.components['componentsButton']:
                     panels.append(AddComponentPanel(Vector2(0,0), Vector2(400,365)))
+                elif 'IDEButton' in self.components.keys() and comp==self.components['IDEButton']:
+                    panels.append(TextPanel(Vector2(0,0), Vector2(500,500)))
                 else:
                     for c in self.components.keys():
                         if 'shape' in c and comp == self.components[c]:
