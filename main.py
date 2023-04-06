@@ -1,13 +1,10 @@
 # TO-DO
 
-# deletion when selection from up to down is 1 char too much
-# deletion when selection from up to down is 1 too much
-# deletion when selection from down to up bug
-# panel order management depending on last clicked panel
-# add suport for syntax highlighting when horizontally scrolling (strings & comments)
-# selection highlight can't be drawn further than the panel boundaries
-# add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
+# LATER: add suport for syntax highlighting when horizontally scrolling (strings & comments)
+# LATER: selection highlight can't be drawn further than the panel boundaries
+# LATER: add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
 
+# DONE : panel order management depending on last clicked panel
 # DONE : add maintained key press support for all keys, including BACKSPACE and RETURN
 # DONE : Ctrl-x should copy (and not juste delete)
 # DONE : add Ctrl-A
@@ -18,7 +15,7 @@
 # DONE : cursor can't be drawn further than the panel boundaries
 
 # MODULES
-import pygame, sys
+import pygame
 from scripts.cursor import cursor
 from scripts.events import update_event, keys, key_update
 from scripts.math.vector2 import Vector2, vectorize
@@ -43,7 +40,7 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 
 # variables
-panels = [TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
+panels = [TextPanel(Vector2(100,0), Vector2(500,500)), TextPanel(Vector2(0,500), Vector2(500,500)), TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 fpsLabel = Label(Vector2(0,-4), color=(0,255,0))
 shapes = []
 lastPressed = None

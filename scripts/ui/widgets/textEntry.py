@@ -170,7 +170,7 @@ class TextEntry(Selectable):
         if ctrl:
             self.move_cursor(-1, shift=True, ctrl=True)
         n_of_loops = 1
-        if len(self.content[self.cursor_pos.y])>=3 and self.content[self.cursor_pos.y][self.cursor_pos.x-1]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-2]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-3]==' ':
+        if not self.isSelecting and len(self.content[self.cursor_pos.y])>=3 and self.content[self.cursor_pos.y][self.cursor_pos.x-1]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-2]==' ' and self.content[self.cursor_pos.y][self.cursor_pos.x-3]==' ':
             n_of_loops = 3
         if self.isSelecting and self.selection != '':
             if self.onReleasePos.y<self.onClickPos.y or (self.onReleasePos.y==self.onClickPos.y and self.onReleasePos.x<=self.onClickPos.x):
@@ -184,8 +184,7 @@ class TextEntry(Selectable):
                 saved_x = self.cursor_pos.x
                 line = self.content.pop(self.cursor_pos.y+1)
                 self.labels.pop(self.cursor_pos.y+1)
-                for char in line:
-                    self.add_char(char)
+                self.add_chars(line)
                 self.cursor_pos.x = saved_x
             elif len(self.content[self.cursor_pos.y])>0:
                 # REMOVE CHAR AT CURSOR POS
