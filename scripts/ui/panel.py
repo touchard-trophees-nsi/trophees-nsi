@@ -2,7 +2,7 @@ import pygame, copy, sys
 from scripts.ui.label import Label
 from scripts.ui.widgets.button import Button
 from scripts.ui.widgets.textEntry import TextEntry
-from scripts.ui.shapesDrawer import defaultShapes
+from scripts.components.shapesDrawer import defaultShapes
 from scripts.math.vector2 import Vector2
 from scripts.math.camera import camera
 from scripts.graphics.color import RGB, gradient_palette
