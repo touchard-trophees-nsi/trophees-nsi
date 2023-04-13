@@ -108,10 +108,11 @@ while True:
     # ----- drawing ----- #
     grid(61,(20,20,20))
     grid(181,(80,80,80))
-    for panel in panels:
-        panel.draw(screen)
+    
     for shape in shapes:
         shape.draw(screen)
+    for panel in panels:
+        panel.draw(screen)
 
     if IS_DEV==True:
         dev_update_and_draw(screen, currentFps, MAX_FPS, lastPressed)
