@@ -23,7 +23,7 @@ from scripts.math.camera import camera
 from scripts.ui.panel import Panel, TextPanel, TopNavPanel
 from scripts.ui.label import Label
 from scripts.ui.grid import grid
-from scripts.ui.shapesDrawer import updateDrawer
+from scripts.components.shapesDrawer import updateDrawer
 from scripts.dev import dev_update_and_draw, dev_update
 from scripts.version import PYGAME_VERSION
 
