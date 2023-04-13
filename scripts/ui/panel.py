@@ -211,8 +211,7 @@ class AddComponentPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Ajouter un composant', font='RobotoMono-Regular', hasBar=True):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
-                           'runButton':Button(Vector2(self.pos.x+self.width-90, self.pos.y), Vector2(40,self.barHeight), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2], img=load_sprite('ui/runIcon'))}
+        self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x')}
 
         for i in range(len(defaultShapes)):
             self.components['shape'+str(i)] = Button(Vector2(self.pos.x+10, self.pos.y+self.barHeight+32*i+10), Vector2(185, 27), text='Ajouter composant', textSize=13)
