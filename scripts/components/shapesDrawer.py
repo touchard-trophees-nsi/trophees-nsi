@@ -1,6 +1,6 @@
 import copy
 from scripts.math.vector2 import Vector2
-from scripts.ui.shapes import Shape
+from scripts.components.shapes import Shape
 
 #Liste des formes affichées par défaut
 defaultShapes = [Shape(Vector2(60,60),Vector2(60,60)),
