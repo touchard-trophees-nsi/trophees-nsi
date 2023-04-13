@@ -17,11 +17,13 @@ class MoveableElement(Selectable):
 
     def update_pos(self,shapes):
         self.shapes = shapes
-        if self.continousClick:
-            if self.FirstClickPos == Vector2.ZERO():
-                self.FirstClickPos = Vector2(self.pos.x-cursor.pos.x, self.pos.y-cursor.pos.y)
-        else:
-            self.FirstClickPos = Vector2.ZERO()
+        if cursor.pos.x>=self.pos.x and cursor.pos.x<=self.pos.x+self.width and cursor.pos.y>=self.pos.y and cursor.pos.y<=self.pos.y+self.height and not self.isFrozen:
+            if cursor.eventType=='left' and (cursor.selectedElement == None or cursor.selectedElement == self):
+                cursor.selectedElement = self
+                if self.FirstClickPos == Vector2.ZERO():
+                    self.FirstClickPos = Vector2(self.pos.x-cursor.pos.x, self.pos.y-cursor.pos.y)
+            else:
+                self.FirstClickPos = Vector2.ZERO()
         if self.FirstClickPos != Vector2.ZERO():
             self.pos = Vector2(cursor.pos.x+self.FirstClickPos.x, cursor.pos.y+self.FirstClickPos.y)
 
@@ -32,6 +34,9 @@ class MoveableElement(Selectable):
             self.pos.x,self.pos.y = self.posgrid()
         else:
             self.pos = self.lastpos
+
+    def onClick(self):
+        self.lastpos = self.pos
 
     def posgrid(self):
         """revoie les coordonnées de la forme alignée sur la grille"""
@@ -49,8 +54,8 @@ class MoveableElement(Selectable):
                 return False
         return True
 
-    def onClick(self):
-        self.lastpos = self.pos
+    def get_type(self):
+        return 'MoveableElement'
 
 class Shape(MoveableElement):
     def __init__(self,pos,size=Vector2(60,60),color=(100,0,0),form="square",direc=0):
@@ -101,3 +106,6 @@ class Shape(MoveableElement):
         3 | pos.x + size.x, pos.y          | draw_top_left=False | draw_top_right=False | draw_bottom_right=True  | draw_bottom_left=False |
         0 | pos.x         , pos.y          | draw_top_left=False | draw_top_right=False | draw_bottom_right=False | draw_bottom_left=True  |
         """
+
+    def get_type(self):
+        return 'Shape'
