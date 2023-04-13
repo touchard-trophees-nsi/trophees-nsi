@@ -10,6 +10,7 @@ class MoveableElement(Selectable):
         super().__init__(pos,size,idleColor=color)
         self.pos,self.lastpos,self.size = pos,pos,size
         self.FirstClickPos = Vector2.ZERO()
+        self.dragging = False
 
     def update(self,shapes):
         self.base_update()
@@ -17,26 +18,30 @@ class MoveableElement(Selectable):
 
     def update_pos(self,shapes):
         self.shapes = shapes
+
+        # Gestion du déplacement des éléments
+        if self.dragging:
+            cursor.selectedElement = self
         if cursor.pos.x>=self.pos.x and cursor.pos.x<=self.pos.x+self.width and cursor.pos.y>=self.pos.y and cursor.pos.y<=self.pos.y+self.height and not self.isFrozen:
             if cursor.eventType=='left' and (cursor.selectedElement == None or cursor.selectedElement == self):
-                cursor.selectedElement = self
+                self.dragging = True
+
                 if self.FirstClickPos == Vector2.ZERO():
                     self.FirstClickPos = Vector2(self.pos.x-cursor.pos.x, self.pos.y-cursor.pos.y)
+
+                if cursor.selectedElement==None: self.lastpos = self.pos
+                cursor.selectedElement = self
             else:
+                self.dragging = False
                 self.FirstClickPos = Vector2.ZERO()
+        if not self.dragging and cursor.selectedElement==self:
+            print('off')
+            if self.placeavail():
+                self.pos.x,self.pos.y = self.posgrid()
+            else:
+                self.pos = self.lastpos
         if self.FirstClickPos != Vector2.ZERO():
             self.pos = Vector2(cursor.pos.x+self.FirstClickPos.x, cursor.pos.y+self.FirstClickPos.y)
-
-    def onRelease(self):
-        """Lorsque la forme est laché, elle s'aligne avec la grille,
-        si la case sous la pièce n'est vide alors la forme retroune à son emplacement initial"""
-        if self.placeavail():
-            self.pos.x,self.pos.y = self.posgrid()
-        else:
-            self.pos = self.lastpos
-
-    def onClick(self):
-        self.lastpos = self.pos
 
     def posgrid(self):
         """revoie les coordonnées de la forme alignée sur la grille"""
