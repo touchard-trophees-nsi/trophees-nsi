@@ -1,5 +1,7 @@
 # TO-DO
 
+# SHAPES COLLISION
+
 # LATER: add suport for syntax highlighting when horizontally scrolling (strings & comments)
 # LATER: selection highlight can't be drawn further than the panel boundaries
 # LATER: add numbers highlight, string highlight should be ended with couples ('' or "" and not '" or "')
@@ -20,10 +22,11 @@ from scripts.cursor import cursor
 from scripts.events import update_event, keys, key_update
 from scripts.math.vector2 import Vector2, vectorize
 from scripts.math.camera import camera
-from scripts.ui.panel import Panel, TextPanel, TopNavPanel
+from scripts.ui.panel import Panel, TextPanel, TopNavPanel, update_panel_buttons
 from scripts.ui.label import Label
 from scripts.ui.grid import grid
 from scripts.components.shapesDrawer import updateDrawer
+from scripts.components.PCB import PCB
 from scripts.dev import dev_update_and_draw, dev_update
 from scripts.version import PYGAME_VERSION
 
@@ -42,7 +45,7 @@ clock = pygame.time.Clock()
 # variables
 panels = [TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 fpsLabel = Label(Vector2(0,-4), color=(0,255,0))
-shapes = []
+shapes = [PCB(Vector2(0,0))]
 lastPressed = None
 
 # MAIN LOGIC
@@ -85,7 +88,7 @@ while True:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_F3:
                 print(IS_DEV, IS_DEV==False, IS_DEV==True)
-                IS_DEV = False if IS_DEV==False else True
+                IS_DEV = not IS_DEV #False if IS_DEV==False else True
             lastPressed = event.unicode
         elif event.type == pygame.KEYUP:
             lastPressed = None
@@ -104,11 +107,12 @@ while True:
     # ----- panel updates ----- #
     for panel in panels:
         panel.update(panels, shapes)
+    update_panel_buttons(panels, shapes)
 
     # ----- drawing ----- #
     grid(61,(20,20,20))
     grid(181,(80,80,80))
-    
+
     for shape in shapes:
         shape.draw(screen)
     for panel in panels:
