@@ -26,6 +26,7 @@ from scripts.ui.panel import Panel, TextPanel, TopNavPanel, update_panel_buttons
 from scripts.ui.label import Label
 from scripts.ui.grid import grid
 from scripts.components.shapesDrawer import updateDrawer
+from scripts.components.PCB import PCB
 from scripts.dev import dev_update_and_draw, dev_update
 from scripts.version import PYGAME_VERSION
 
@@ -44,7 +45,7 @@ clock = pygame.time.Clock()
 # variables
 panels = [TextPanel(Vector2(0,0), Vector2(500,500)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 fpsLabel = Label(Vector2(0,-4), color=(0,255,0))
-shapes = []
+shapes = [PCB(Vector2(0,0))]
 lastPressed = None
 
 # MAIN LOGIC
@@ -104,9 +105,9 @@ while True:
     #updateDrawer(shapes)
 
     # ----- panel updates ----- #
+    update_panel_buttons(panels, shapes)
     for panel in panels:
         panel.update(panels, shapes)
-    update_panel_buttons(panels, shapes)
 
     # ----- drawing ----- #
     grid(61,(20,20,20))
