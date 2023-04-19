@@ -4,6 +4,9 @@ from scripts.cursor import cursor
 from scripts.ui.selectable import Selectable
 from scripts.graphics.color import RGB
 from scripts.version import PYGAME_IS_MODERN_VERSION
+from scripts.dev import dprint
+
+GRID_WIDTH = 60
 
 class MoveableElement(Selectable):
     def __init__(self,pos,size,color):
@@ -11,6 +14,8 @@ class MoveableElement(Selectable):
         self.pos,self.lastpos,self.size = pos,pos,size
         self.FirstClickPos = Vector2.ZERO()
         self.dragging = False
+        self.taken_space = Vector2((self.width)//(GRID_WIDTH+1) + 1, (self.height)//(GRID_WIDTH+1) + 1)
+        self.start_pos = Vector2(int(((self.taken_space.x*GRID_WIDTH)-self.width)/2), int(((self.taken_space.y*GRID_WIDTH)-self.height)/2))
 
     def update(self,shapes):
         self.base_update()
@@ -18,11 +23,10 @@ class MoveableElement(Selectable):
 
     def update_pos(self,shapes):
         self.shapes = shapes
-
         # Gestion du déplacement des éléments
         if self.dragging:
             cursor.selectedElement = self
-        if cursor.pos.x>=self.pos.x and cursor.pos.x<=self.pos.x+self.width and cursor.pos.y>=self.pos.y and cursor.pos.y<=self.pos.y+self.height and not self.isFrozen:
+        if cursor.pos.x>=self.start_pos.x+self.pos.x and cursor.pos.x<=self.start_pos.x+self.pos.x+self.width and cursor.pos.y>=self.start_pos.y+self.pos.y and cursor.pos.y<=self.start_pos.y+self.pos.y+self.height and not self.isFrozen:
             if cursor.eventType=='left' and (cursor.selectedElement == None or cursor.selectedElement == self):
                 self.dragging = True
 
@@ -35,7 +39,6 @@ class MoveableElement(Selectable):
                 self.dragging = False
                 self.FirstClickPos = Vector2.ZERO()
         if not self.dragging and cursor.selectedElement==self:
-            print('off')
             if self.placeavail():
                 self.pos.x,self.pos.y = self.posgrid()
             else:
@@ -45,25 +48,31 @@ class MoveableElement(Selectable):
 
     def posgrid(self):
         """revoie les coordonnées de la forme alignée sur la grille"""
-        gp = 60 # Valeur actuelle de l'espacement des lignes de la grille
-        diffx = self.pos.x % gp
-        diffy = self.pos.y % gp
-        posx = self.pos.x - (diffx if diffx<gp//2 else diffx-60)
-        posy = self.pos.y - (diffy if diffy<gp//2 else diffy-60)
+        diffx = self.pos.x % GRID_WIDTH
+        diffy = self.pos.y % GRID_WIDTH
+        posx = self.pos.x - (diffx if diffx<GRID_WIDTH//2 else diffx-GRID_WIDTH)
+        posy = self.pos.y - (diffy if diffy<GRID_WIDTH//2 else diffy-GRID_WIDTH)
         return posx,posy
 
     def placeavail(self):
         posalign = self.posgrid()
+        rect = pygame.Rect(posalign[0],posalign[1],self.taken_space.x*GRID_WIDTH,self.taken_space.y*GRID_WIDTH)
         for i in range(len(self.shapes)):
-            if (self.shapes[i].pos.x,self.shapes[i].pos.y) == posalign and self.shapes[i] != self:
-                return False
+            if self.shapes[i]!=self:
+                otherShapeRect = pygame.Rect(self.shapes[i].pos.x,self.shapes[i].pos.y,self.shapes[i].taken_space.x*GRID_WIDTH,self.shapes[i].taken_space.y*GRID_WIDTH)
+                if 'PCB' in self.shapes[i].get_type():
+                    if otherShapeRect.contains(rect):
+                        continue
+                isColliding = rect.colliderect(otherShapeRect)
+                if isColliding:
+                    return False
         return True
 
     def get_type(self):
         return 'MoveableElement'
 
 class Shape(MoveableElement):
-    def __init__(self,pos,size=Vector2(60,60),color=(100,0,0),form="square",direc=0):
+    def __init__(self,pos,size=Vector2(GRID_WIDTH,GRID_WIDTH),color=(100,0,0),form="square",direc=0):
         if type(color) == tuple: color = RGB(color)
         super().__init__(pos,size,color)
         self.pos,self.size,self.color = pos,size,color
@@ -83,11 +92,11 @@ class Shape(MoveableElement):
     def draw(self,screen):
         if self.continousClick and self.placeavail():
             if PYGAME_IS_MODERN_VERSION: # la ligne ci-dessous renvoie une erreur si la version de pygame est inférieure à 2.0.1, donc on dessine un carré sans arrondi pour les versions antérieures
-                pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2, self.posgrid()[1]+2, self.size.x-4, self.size.y-4), 2, 10)
+                pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2+self.start_pos.x, self.posgrid()[1]+2+self.start_pos.y, self.size.x-4, self.size.y-4), 2, 10)
             else:
-                pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2, self.posgrid()[1]+2, self.size.x-4, self.size.y-4), 2)
+                pygame.draw.rect(screen, (180,180,180), (self.posgrid()[0]+2+self.start_pos.x, self.posgrid()[1]+2+self.start_pos.y, self.size.x-4, self.size.y-4), 2)
         if self.form == "square":
-            pygame.draw.rect(screen, self.color.value, (self.pos.x, self.pos.y, self.size.x, self.size.y))
+            pygame.draw.rect(screen, self.color.value, (self.pos.x+self.start_pos.x, self.pos.y+self.start_pos.y, self.size.x, self.size.y))
         elif self.form == "triangle":
             pygame.draw.polygon(screen, self.color.value, [(self.pos.x, self.pos.y), (self.pos.x + self.size.x, self.pos.y), (self.pos.x, self.size.y + self.pos.y),(self.pos.x + self.size.x, self.size.y + self.pos.y),(self.pos.x, self.pos.y), (self.pos.x + self.size.x, self.pos.y)][self.direction:self.direction+3], 0)
         elif self.form == "circle":

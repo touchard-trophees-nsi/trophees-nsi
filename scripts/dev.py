@@ -12,6 +12,20 @@ graph = []
 labels = [Label(Vector2(0,-4), color=(0,255,0)), Label(Vector2(0,9), color=(0,255,0)), Label(Vector2(0,22), color=(0,255,0))]
 tooltips = ['fps   ', 'MAXfps','key   ']
 
+# debug log
+debug_log = []
+debug_labels = []
+
+def dprint(text):
+    debug_log.insert(0, str(text))
+    debug_labels.append(Label(Vector2(0,camera.h-16), color=(0,255,0)))
+    for i in range(len(debug_log)):
+        debug_labels[i].position.y = camera.h-16*(i+1)
+        debug_labels[i].text = str(debug_log[i])
+
+def dclear(text):
+    debug_log = []
+
 def dev_update(*args):
     global graph
     graph.append(args[0])
@@ -29,3 +43,6 @@ def dev_update_and_draw(screen, *args):
 
     for i in range(len(graph)-1):
         draw.line(screen, (0,255,0), (100+i*1, (args[1]+10)-graph[i]), (100+(i+1)*1, (args[1]+10)-graph[i+1]))
+
+    for i in range(len(debug_labels[:50])):
+        debug_labels[i].draw(screen, debug_labels[i].text)

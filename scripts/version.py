@@ -1,7 +1,7 @@
 from pygame.version import PygameVersion, vernum
 
 PYGAME_VERSION = vernum
-PYGAME_IS_MODERN_VERSION = vernum >= PygameVersion(2,0,1)
+PYGAME_IS_MODERN_VERSION = print(vernum >= PygameVersion(2,0,1))
 
 if not PYGAME_IS_MODERN_VERSION:
     print(f'''--- ATTENTION ---
