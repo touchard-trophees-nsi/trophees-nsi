@@ -13,3 +13,5 @@
 <img src='doc/images/Screenshot_2.png' width='500'>
 <h2>Projet Trophée NSI</h2>
 <p>Nous avons créé ce jeu pour les <a href='https://trophees-nsi.fr/'>trophées NSI 2023</a></p>
+<h2>Licence</h2>
+<p>Le programme est placé sous la licence publique générale GNU version 3+.
