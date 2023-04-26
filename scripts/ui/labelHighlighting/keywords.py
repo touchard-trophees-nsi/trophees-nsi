@@ -1,7 +1,7 @@
 import keyword
 
 coloredKeywords = {
-    (255,63,79):['if', 'elif', 'else', 'for', 'while', 'break', 'continue', 'with', 'import', 'as', 'using', 'and', 'or', 'not', 'in', 'is', 'return', 'yield', 'pass', 'del', 'global', 'nonlocal', 'await', 'try', 'except', 'finally', 'assert', 'raise'], # red
+    (255,63,79):['if', 'elif', 'else', 'for', 'while', 'break', 'continue', 'with', 'from', 'import', 'as', 'using', 'and', 'or', 'not', 'in', 'is', 'return', 'yield', 'pass', 'del', 'global', 'nonlocal', 'await', 'try', 'except', 'finally', 'assert', 'raise', '>>start', '>>update', '>>end'], # red
     (25,209,229):['def', 'class', '__init__', 'int', 'float', 'bool', 'str', 'async'], # blue
     (227,115,206):['True','False','None'], # pink
     (248,142,10):['self'], # orange

@@ -1,8 +1,12 @@
 import pygame, copy, sys
+from scripts.parser.parse import parse
+from scripts.parser.pseudocode import get_code, get_game_state, set_game_state, set_code
+from scripts.parser.user_print import user_print
+from scripts.parser.exception_handler import handle_exception
 from scripts.ui.label import Label
 from scripts.ui.widgets.button import Button
 from scripts.ui.widgets.textEntry import TextEntry
-from scripts.components.shapesDrawer import defaultShapes
+from scripts.components.shapes import defaultShapes
 from scripts.math.vector2 import Vector2
 from scripts.math.camera import camera
 from scripts.graphics.color import RGB, gradient_palette
@@ -253,14 +257,19 @@ def update_panel_buttons(panels, shapes):
                         for panel in panels:
                             if panel.get_type()=='Panel.TextPanel':
                                 # executing code of entry text widgets
-                                for i in range(len(panel.components.values())):
-                                    comp = list(panel.components.values())[i]
-                                    if comp.get_type() == 'Selectable.TextEntry':
-                                        code = comp.get_text()
-                                        try:
-                                            exec(code)
-                                        except:
-                                            print('Error: unable to run panel code')
+                                try:
+                                    if not get_game_state():
+                                        for i in range(len(panel.components.values())):
+                                                comp = list(panel.components.values())[i]
+                                                if comp.get_type() == 'Selectable.TextEntry':
+                                                    code = r'{}'.format(comp.get_text())
+                                                    parse(code, shapes)
+                                                    set_game_state(True)
+                                    else: # >>end execution
+                                        set_code('','','')
+                                        set_game_state(False)
+                                except Exception as e:
+                                    user_print(handle_exception(e))
                     elif 'componentsButton' in panel.components.keys() and comp==panel.components['componentsButton']:
                         panels.append(AddComponentPanel(Vector2(0,0), Vector2(400,365)))
                     elif 'IDEButton' in panel.components.keys() and comp==panel.components['IDEButton']:
@@ -308,74 +317,3 @@ def update_panel_buttons(panels, shapes):
                             if 'shape' in c and comp == panel.components[c]:
                                 shapes.append(copy.copy(defaultShapes[int(c.replace('shape',''))]))
             break
-
-    '''
-    for i in range(len(panels)-1,-1,-1):
-        if doBreak: break
-        panel = panels[i]
-        if pygame.Rect(panels[i].pos.x,panels[i].pos.y,panels[i].width,panels[i].height).collidepoint((cursor.pos.x,cursor.pos.y)):
-            for i in range(len(panel.components.values())):
-                comp = list(panel.components.values())[i]
-                if 'Button' in comp.get_type() and comp.is_pressed and comp.isActive:
-                    if ('closeButton' in panel.components.keys() and comp==panel.components['closeButton']) or ('ResumeButton' in panel.components.keys() and comp==panel.components['ResumeButton']):
-                        panels.remove(panel)
-                    elif 'runButton' in panel.components.keys() and comp==panel.components['runButton']:
-                        for panel in panels:
-                            if panel.get_type()=='Panel.TextPanel':
-                                # executing code of entry text widgets
-                                for i in range(len(panel.components.values())):
-                                    comp = list(panel.components.values())[i]
-                                    if comp.get_type() == 'Selectable.TextEntry':
-                                        code = comp.get_text()
-                                        try:
-                                            exec(code)
-                                        except:
-                                            print('Error: unable to run panel code')
-                    elif 'componentsButton' in panel.components.keys() and comp==panel.components['componentsButton']:
-                        panels.append(AddComponentPanel(Vector2(0,0), Vector2(400,365)))
-                    elif 'IDEButton' in panel.components.keys() and comp==panel.components['IDEButton']:
-                        panels.append(TextPanel(Vector2(0,0), Vector2(500,500)))
-
-                    # -- main menu --
-                    elif 'HomeButton' in panel.components.keys() and comp==panel.components['HomeButton']:
-                        panels.append(MenuPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
-                    elif 'SettingsButton' in panel.components.keys() and comp==panel.components['SettingsButton']:
-                        panels.remove(panel)
-                        panels.append(SettingsPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
-                    elif 'QuitButton' in panel.components.keys() and comp==panel.components['QuitButton']:
-                        pygame.quit()
-                        sys.exit()
-
-                    # -- options menu --
-                    elif 'LangButton' in panel.components.keys() and comp==panel.components['LangButton']:
-                        panels.remove(panel)
-                        panels.append(LangPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
-                    elif 'KeyboardButton' in panel.components.keys() and comp==panel.components['KeyboardButton']:
-                        panels.remove(panel)
-                        panels.append(KeyboardPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
-                    elif 'BackButton' in panel.components.keys() and comp==panel.components['BackButton']:
-                        panels.remove(panel)
-                        panels.append(MenuPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
-
-                    # -- lang menu --
-                    elif 'frButton' in panel.components.keys() and comp==panel.components['frButton']:
-                        panels.remove(panel)
-                        lang = 'fr'
-                    elif 'enButton' in panel.components.keys() and comp==panel.components['enButton']:
-                        panels.remove(panel)
-                        lang = 'en'
-
-                    # -- keyboard menu --
-                    elif 'azertyButton' in panel.components.keys() and comp==panel.components['azertyButton']:
-                        panels.remove(panel)
-                        isKeyboardAzerty = True
-                    elif 'qwertyButton' in panel.components.keys() and comp==panel.components['qwertyButton']:
-                        panels.remove(panel)
-                        isKeyboardAzerty = False
-
-                    else:
-                        for c in panel.components.keys():
-                            if 'shape' in c and comp == panel.components[c]:
-                                shapes.append(copy.copy(defaultShapes[int(c.replace('shape',''))]))
-            doBreak = True
-            break'''
