@@ -1,4 +1,3 @@
-from cgitb import text
 import pygame, sys
 from scripts.cursor import cursor
 from scripts.ui.widgets.textEntry import TextEntry
@@ -43,13 +42,14 @@ def key_update(key, isPressingShift, isPressingCtrl):
                     cursor.selectedElement.add_return()
                 elif key in keys.keys():
                     cursor.selectedElement.add_char(key, isManual=True)
-                    print('Invalid direcitonal key')
                 keys[key][3]+=1
             else:
                 keys[key][3]=0
 
 def key_press(key, isPressingShift, isPressingCtrl):
-    keys[key][0]+=1 ; keys[key][1]=isPressingShift ; keys[key][2]=isPressingCtrl
+    try:
+        keys[key][0]+=1 ; keys[key][1]=isPressingShift ; keys[key][2]=isPressingCtrl
+    except: pass
 
 def update_event(event):
     if event.type == pygame.KEYDOWN:
