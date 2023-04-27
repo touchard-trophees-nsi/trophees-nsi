@@ -1,0 +1,17 @@
+# GAME
+# For IT trophies
+
+text.menu: "Menu"
+button.resume: "Resume"
+button.restart: "Restart"
+button.new_device: "New device"
+button.load_device: "Load a device"
+button.settings: "Settings"
+button.credits: "Credits"
+button.quit: "Quit"
+text.console: "Console"
+text.add_a_component: "Add a component"
+button.add_a_component: "Add component"
+button.language: "Language"
+button.keyboard: "Keyboard"
+button.back: "Back"
