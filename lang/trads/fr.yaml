@@ -1,0 +1,17 @@
+# JEU
+# Pour les trophees NSI
+
+text.menu: "Menu"
+button.resume: "Reprendre"
+button.restart: "Recommencer"
+button.new_device: "Nouvel appareil"
+button.load_device: "Charger un appareil"
+button.settings: "Options"
+button.credits: "Crédits"
+button.quit: "Quitter"
+text.console: "Console"
+text.add_a_component: "Ajouté un composant"
+button.add_a_component: "Ajouté composant"
+button.language: "Langage"
+button.keyboard: "Clavier"
+button.back: "Retour"
