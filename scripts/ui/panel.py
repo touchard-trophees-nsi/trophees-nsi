@@ -193,7 +193,7 @@ class MenuPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-350), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text= getText('text.menu',lang.getLang()), textSize=55),
+        self.components = {'Logo': Button(Vector2(camera.w_2,camera.h_2-370), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],img = load_sprite('logo')),
                            'ResumeButton':Button(Vector2(camera.w_2-140,camera.h_2-250), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= getText('button.resume',lang.getLang()), textSize=35),
                            'LoadDeviceButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= getText('button.load_device',lang.getLang()), textSize=23),
                            'NewDeviceButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= getText('button.new_device',lang.getLang()), textSize=28),
