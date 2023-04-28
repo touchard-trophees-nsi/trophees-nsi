@@ -27,3 +27,8 @@ button.id_video: 'ID puce vidéo:'
 text.attach_cpu: 'Veuillez attacher un CPU à un circuit imprimé!'
 text.save_success: 'Sauvegardé avec succès!'
 text.invalid_field: 'Champs invalides!'
+text.screen: "écran"
+text.printed_circuit_board: "circuit imprimé"
+text.simple_boutton: "bouton simple"
+text.directional_button: "bouton directionnel"
+text.video_chip: "puce vidéo"
