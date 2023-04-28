@@ -26,15 +26,6 @@ from scripts.components.output.screen import Screen
 from scripts.components.input.pressButton import PressButton
 from scripts.components.input.directionalButton import DirectionalButton
 
-defaultShapes = {
-    getText('text.printed_circuit_board',lang.getLang()):PCB(Vector2(61,61),Vector2(300,300)),
-    'CPU':CPU(Vector2(61,61),Vector2(80,80)),
-    getText('text.video_chip',lang.getLang()):VideoChip(Vector2(61,61),Vector2(80,40)),
-    getText('text.screen',lang.getLang()):Screen(Vector2(61,61),Vector2(170,170)),
-    getText('text.simple_boutton',lang.getLang()):PressButton(Vector2(61,61),Vector2(50,50)),
-    getText('directional_button',lang.getLang()):DirectionalButton(Vector2(61,61),Vector2(120,120))
-}
-
 class CommonLang:
     def __init__(self,lang):
         self.lang=lang
@@ -46,6 +37,15 @@ class CommonLang:
         return self.lang
 
 lang=CommonLang("fr")
+
+defaultShapes = {
+    getText('text.printed_circuit_board',lang.getLang()):PCB(Vector2(61,61),Vector2(300,300)),
+    'CPU':CPU(Vector2(61,61),Vector2(80,80)),
+    getText('text.video_chip',lang.getLang()):VideoChip(Vector2(61,61),Vector2(80,40)),
+    getText('text.screen',lang.getLang()):Screen(Vector2(61,61),Vector2(170,170)),
+    getText('text.simple_boutton',lang.getLang()):PressButton(Vector2(61,61),Vector2(50,50)),
+    getText('directional_button',lang.getLang()):DirectionalButton(Vector2(61,61),Vector2(120,120))
+}
     
 defaultPalette = gradient_palette(RGB(48,48,48),step=15,len_=2)
 class Panel:
