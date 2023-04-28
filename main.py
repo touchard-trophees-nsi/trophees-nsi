@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 
 # variables & functions
-panels = [AddComponentPanel(Vector2(120,120), Vector2(280,240)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
+panels = [MenuPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])),AddComponentPanel(Vector2(120,120), Vector2(280,240)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
 shapes = []
 lastPressed = None
 oldGameState = False
