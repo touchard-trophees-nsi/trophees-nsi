@@ -25,7 +25,3 @@ class Button(Selectable):
 
     def get_type(self):
         return 'Selectable.Button'
-    
-    def onClick(self):
-        click_sound=pygame.mixer.Sound("sound/click.mp3")
-        click_sound.play()
