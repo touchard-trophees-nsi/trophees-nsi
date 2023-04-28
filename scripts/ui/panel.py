@@ -193,9 +193,9 @@ class TopNavPanel(Panel):
 
 class AddComponentPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('text.add_a_component',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
+        super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.name = getText('text.add_a_component',lang.getLang())
         self.labels = [Label(Vector2(self.pos.x+7, self.pos.y+2), size=17, text=self.name, font=font)]
-        super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x')}
 
         names = list(defaultShapes.keys())
