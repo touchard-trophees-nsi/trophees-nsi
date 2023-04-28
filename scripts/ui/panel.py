@@ -198,7 +198,7 @@ class AddComponentPanel(Panel):
 
         names = list(defaultShapes.keys())
         for i in range(len(defaultShapes)):
-            self.components['shape_ '+names[i]] = Button(Vector2(self.pos.x+10, self.pos.y+self.barHeight+32*i+10), Vector2(250, 27), text=name=getText('button.add',lang.getLang())+names[i], textSize=13)
+            self.components['shape_ '+names[i]] = Button(Vector2(self.pos.x+10, self.pos.y+self.barHeight+32*i+10), Vector2(250, 27), text=getText('button.add',lang.getLang())+names[i], textSize=13)
 
         self.componentPosOffsets = []
         for comp in self.components.values():
