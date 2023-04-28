@@ -16,6 +16,7 @@ from scripts.graphics.spriteManager import load_sprite
 from scripts.cursor import cursor
 from scripts.file_handler import load_device, save_device_as
 from scripts.dev import dprint
+from lang.lang import getText
 # -------- #
 # ---------#
 from scripts.components.PCB import PCB
@@ -33,6 +34,18 @@ defaultShapes = {
     'bouton simple':PressButton(Vector2(61,61),Vector2(50,50)),
     'bouton directionnel':DirectionalButton(Vector2(61,61),Vector2(120,120))
 }
+
+class CommonLang:
+    def __init__(self,lang):
+        self.lang=lang
+
+    def changeLang(self,language):
+        self.lang=language
+
+    def getLang(self):
+        return self.lang
+
+lang=CommonLang("fr")
     
 defaultPalette = gradient_palette(RGB(48,48,48),step=15,len_=2)
 class Panel:
@@ -150,7 +163,7 @@ class Panel:
         return 'Panel'
 
 class TextPanel(Panel):
-    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Console', font='RobotoMono-Regular', hasBar=True):
+    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('text.console',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
@@ -179,13 +192,13 @@ class TopNavPanel(Panel):
         return 'Panel.TopNavPanel'
 
 class AddComponentPanel(Panel):
-    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Ajouter un composant', font='RobotoMono-Regular', hasBar=True):
+    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('text.add_a_component',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x')}
 
         names = list(defaultShapes.keys())
         for i in range(len(defaultShapes)):
-            self.components['shape_ '+names[i]] = Button(Vector2(self.pos.x+10, self.pos.y+self.barHeight+32*i+10), Vector2(250, 27), text='Ajouter '+names[i], textSize=13)
+            self.components['shape_ '+names[i]] = Button(Vector2(self.pos.x+10, self.pos.y+self.barHeight+32*i+10), Vector2(250, 27), text=name=getText('button.add',lang.getLang())+names[i], textSize=13)
 
         self.componentPosOffsets = []
         for comp in self.components.values():
@@ -200,11 +213,11 @@ class AddComponentPanel(Panel):
         return 'Panel.AddComponentPanel'
 
 class SavePanel(Panel):
-    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Sauvegarder', font='RobotoMono-Regular', hasBar=True):
+    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('button.save',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
                            'saveTextEntry':HorizontalTextEntry(Vector2(self.pos.x+150, self.pos.y+self.barHeight+15), Vector2(240,20), text='Appareil_1'),
-                           'saveButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+45), Vector2(200,20), textSize=15, text='Sauvegarder')}
+                           'saveButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+45), Vector2(200,20), textSize=15, text=getText('button.save',lang.getLang()),)}
         self.labels.append(Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text='Nom du fichier:'))
         self.labelPosOffsets.append(Vector2(7,self.barHeight+15))
 
@@ -220,12 +233,12 @@ class MenuPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-350), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text= 'Menu', textSize=55),
-                           'LoadDeviceButton':Button(Vector2(camera.w_2-140,camera.h_2-250), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Charger un appareil', textSize=23),
-                           'NewDeviceButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Nouvel appareil', textSize=28),
-                           'SettingsButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Options', textSize=35),
-                           'CreditsButton':Button(Vector2(camera.w_2-140,camera.h_2+50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Crédits', textSize=35),
-                           'QuitButton':Button(Vector2(camera.w_2-140,camera.h_2+150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Quitter', textSize=35)}
+        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-350), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text=getText('text.menu',lang.getLang()), textSize=55),
+                           'LoadDeviceButton':Button(Vector2(camera.w_2-140,camera.h_2-250), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.load_device',lang.getLang()), textSize=23),
+                           'NewDeviceButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.new_device',lang.getLang()), textSize=28),
+                           'SettingsButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.settings',lang.getLang()), textSize=35),
+                           'CreditsButton':Button(Vector2(camera.w_2-140,camera.h_2+50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.credits',lang.getLang()), textSize=35),
+                           'QuitButton':Button(Vector2(camera.w_2-140,camera.h_2+150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.quit',lang.getLang()), textSize=35)}
 
         self.componentPosOffsets = []
         for comp in self.components.values():
@@ -238,10 +251,10 @@ class SettingsPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text= 'Options', textSize=55),
-                           'LangButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Langue', textSize=35),
-                           'KeyboardButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Clavier', textSize=35),
-                           'BackButton':Button(Vector2(camera.w_2-140,camera.h_2+50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Retour', textSize=35)}
+        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text=getText('button.settings',lang.getLang()), textSize=55),
+                           'LangButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.language',lang.getLang()), textSize=35),
+                           'KeyboardButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.keyboard',lang.getLang()), textSize=35),
+                           'BackButton':Button(Vector2(camera.w_2-140,camera.h_2+50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text=getText('button.back',lang.getLang()), textSize=35)}
 
         self.componentPosOffsets = []
         for comp in self.components.values():
@@ -254,9 +267,9 @@ class LangPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text= 'Langue', textSize=55),
+        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text=getText('button.language',lang.getLang()), textSize=55),
                            'frButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Français', textSize=35),
-                           'enButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'Anglais', textSize=35),}
+                           'enButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'English', textSize=35),}
 
         self.componentPosOffsets = []
         for comp in self.components.values():
@@ -269,7 +282,7 @@ class KeyboardPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text= 'Clavier', textSize=55),
+        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text=getText('button.keyboard',lang.getLang()), textSize=55),
                            'azertyButton':Button(Vector2(camera.w_2-140,camera.h_2-150), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'AZERTY', textSize=35),
                            'qwertyButton':Button(Vector2(camera.w_2-140,camera.h_2-50), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= 'QWERTY', textSize=35),}
 
@@ -284,7 +297,7 @@ class LoadDevicePanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         colors = gradient_palette(self.barColor, step=-15)
-        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text= 'Charger un appareil', textSize=55)}
+        self.components = {'Title': Button(Vector2(camera.w_2,camera.h_2-250), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],text=getText('button.load_device',lang.getLang()), textSize=55)}
         files = [str(file) for file in listdir('data/') if isfile(join('data/',file))]
         text_size = 35
         for i in range(len(files)):
@@ -304,9 +317,9 @@ class LoadDevicePanel(Panel):
 class DefaultRightClickPanel(Panel):
     def __init__(self, pos, parent, dims=Vector2(200,92), bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
-        self.components = {'deleteButton': Button(Vector2.ZERO(), Vector2(200,30), idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[1],text='Supprimer', textSize=18),
-                           'rotateButton': Button(Vector2(0,31), Vector2(200,30), idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[1],text='Tourner', textSize=18),
-                           'propertiesButton': Button(Vector2(0,62), Vector2(200,30), idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[1],text='Propriétés', textSize=18)}
+        self.components = {'deleteButton': Button(Vector2.ZERO(), Vector2(200,30), idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[1],text=getText('button.delete',lang.getLang()), textSize=18),
+                           'rotateButton': Button(Vector2(0,31), Vector2(200,30), idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[1],text=getText('button.rotate',lang.getLang()), textSize=18),
+                           'propertiesButton': Button(Vector2(0,62), Vector2(200,30), idleColor=defaultPalette[0], hoveredColor=defaultPalette[1], selectedColor=defaultPalette[1],text=getText('button.characteristics',lang.getLang()), textSize=18)}
         self.parent = parent
         self.componentPosOffsets = [Vector2.ZERO(), Vector2(0,31), Vector2(0,62)]
 
@@ -321,12 +334,12 @@ class DefaultRightClickPanel(Panel):
         return 'Panel.DefaultRightClickPanel'
 
 class DefaultPropertiesPanel(Panel):
-    def __init__(self, pos, parent, dims=Vector2(400,110), bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Propriétés', font='RobotoMono-Regular', hasBar=True):
+    def __init__(self, pos, parent, dims=Vector2(400,110), bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('button.characteristics',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.parent = parent
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
                            'idTextEntry':HorizontalTextEntry(Vector2(self.pos.x+150, self.pos.y+self.barHeight+15), Vector2(240,20), text=parent.get_ID()),
-                           'saveDefaultPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+45), Vector2(200,20), textSize=15, text='Sauvegarder')}
+                           'saveDefaultPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+45), Vector2(200,20), textSize=15, text=getText('button.save',lang.getLang()))}
         self.labels.append(Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text='ID interne:'))
         self.labelPosOffsets.append(Vector2(7,self.barHeight+15))
 
@@ -335,17 +348,17 @@ class DefaultPropertiesPanel(Panel):
             self.componentPosOffsets.append(comp.pos-self.pos)
 
 class ScreenPropertiesPanel(Panel):
-    def __init__(self, pos, parent, dims=Vector2(400,170), bgColor=defaultPalette[0], barColor=defaultPalette[1], name='Propriétés', font='RobotoMono-Regular', hasBar=True):
+    def __init__(self, pos, parent, dims=Vector2(400,170), bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('button.characteristics',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.parent = parent
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
                            'idTextEntry':HorizontalTextEntry(Vector2(self.pos.x+150, self.pos.y+self.barHeight+15), Vector2(240,20), text=parent.get_ID()),
                            'dimensionsTextEntry':HorizontalTextEntry(Vector2(self.pos.x+150, self.pos.y+self.barHeight+45), Vector2(240,20), text=str(self.parent.size.x)+'x'+str(self.parent.size.y)),
                            'videochipTextEntry':HorizontalTextEntry(Vector2(self.pos.x+150, self.pos.y+self.barHeight+75), Vector2(240,20), text=self.parent.get_videoChipID()),
-                           'saveScreenPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+110), Vector2(200,20), textSize=15, text='Sauvegarder')}
-        labels_ = [Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text='ID interne:'),
-                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+45),size=15,text='Dimensions:'),
-                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+75),size=15,text='ID puce vidéo:')]
+                           'saveScreenPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+110), Vector2(200,20), textSize=15, text=getText('button.save',lang.getLang()))}
+        labels_ = [Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text=getText('button.id_internal',lang.getLang())),
+                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+45),size=15,text=getText('button.size',lang.getLang())),
+                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+75),size=15,text=getText('button.id_video',lang.getLang()))]
         labelOffsets_ = [Vector2(7,self.barHeight+15),Vector2(7,self.barHeight+45),Vector2(7,self.barHeight+75)]
         for l in labels_: self.labels.append(l)
         for lo in labelOffsets_: self.labelPosOffsets.append(lo)
@@ -362,11 +375,11 @@ class PCBPropertiesPanel(Panel):
                            'idTextEntry':HorizontalTextEntry(Vector2(self.pos.x+190, self.pos.y+self.barHeight+15), Vector2(240,20), text=parent.get_ID()),
                            'dimensionsTextEntry':HorizontalTextEntry(Vector2(self.pos.x+190, self.pos.y+self.barHeight+45), Vector2(240,20), text=str(self.parent.size.x)+'x'+str(self.parent.size.y)),
                            'colorTextEntry':HorizontalTextEntry(Vector2(self.pos.x+190, self.pos.y+self.barHeight+75), Vector2(240,20), text=str(self.parent.displayColor)),
-                           'savePCBPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+110), Vector2(200,20), textSize=15, text='Sauvegarder')}
+                           'savePCBPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+110), Vector2(200,20), textSize=15, text=getText('button.save',lang.getLang()))}
         
-        labels_ = [Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text='ID interne:'),
-                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+45),size=15,text='Dimensions:'),
-                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+75),size=15,text='Couleur d\'affichage:')]
+        labels_ = [Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text=getText('button._internal',lang.getLang())),
+                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+45),size=15,text=getText('button.save',lang.getLang())),
+                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+75),size=15,text=getText('button.save',lang.getLang()))]
         labelOffsets_ = [Vector2(7,self.barHeight+15),Vector2(7,self.barHeight+45),Vector2(7,self.barHeight+75)]
         for l in labels_: self.labels.append(l)
         for lo in labelOffsets_: self.labelPosOffsets.append(lo)
@@ -405,7 +418,7 @@ def update_panel_buttons(panels, shapes):
                                                 if check!=None:
                                                     set_game_state(True)
                                                 else:
-                                                    user_print('Veuillez attacher un CPU à un circuit imprimé!')       
+                                                    user_print(getText('text.attach_cpu',lang.getLang()))       
                                 else: # >>end execution
                                     stop_game()
                             except Exception as e:
@@ -460,10 +473,10 @@ def update_panel_buttons(panels, shapes):
                     elif 'saveDefaultPropertiesButton' in panel.components.keys() and comp==panel.components['saveDefaultPropertiesButton']:
                         try:
                             panel.parent.set_ID(panel.components['idTextEntry'].content[0])
-                            user_print('Sauvegardé avec succès!')
+                            user_print(getText('text.save_success',lang.getLang()))
                             toRemove.append(panel)
                         except:
-                            user_print('Champs invalides!')
+                            user_print(getText('text.invalid_field',lang.getLang()))
                     elif 'saveScreenPropertiesButton' in panel.components.keys() and comp==panel.components['saveScreenPropertiesButton']:
                         try:
                             #
@@ -473,10 +486,10 @@ def update_panel_buttons(panels, shapes):
                             panel.parent.set_dimensions(int(dimensions[0]), int(dimensions[1]))
                             #
                             panel.parent.set_videoChipID(panel.components['videochipTextEntry'].content[0])
-                            user_print('Sauvegardé avec succès!')
+                            user_print(getText('text.save_success',lang.getLang()))
                             toRemove.append(panel)
                         except:
-                            user_print('Champs invalides!')
+                            user_print(getText('text.invalid_field',lang.getLang()))
                     elif 'savePCBPropertiesButton' in panel.components.keys() and comp==panel.components['savePCBPropertiesButton']:
                         try:
                             panel.parent.set_ID(panel.components['idTextEntry'].content[0])
@@ -486,10 +499,10 @@ def update_panel_buttons(panels, shapes):
                             color = tuple(int(x) for x in color_str[1:-1].split(','))
                             _ = pygame.Color(*color)
                             panel.parent.displayColor = color
-                            user_print('Sauvegardé avec succès!')
+                            user_print(getText('text.save_success',lang.getLang()))
                             toRemove.append(panel)
                         except:
-                            user_print('Champs invalides!')
+                            user_print(getText('text.invalid_field',lang.getLang()))
 
                     # ------------------------- #
                     # ------- main menu ------- #
@@ -533,10 +546,10 @@ def update_panel_buttons(panels, shapes):
                     # -- lang menu --
                     elif 'frButton' in panel.components.keys() and comp==panel.components['frButton']:
                         toRemove.append(panel)
-                        lang = 'fr'
+                        lang.changeLang('fr')
                     elif 'enButton' in panel.components.keys() and comp==panel.components['enButton']:
                         toRemove.append(panel)
-                        lang = 'en'
+                        lang.changeLang('en')
 
                     # -- keyboard menu --
                     elif 'azertyButton' in panel.components.keys() and comp==panel.components['azertyButton']:
