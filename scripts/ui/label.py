@@ -6,7 +6,7 @@ from random import randint
 
 loaded_fonts = {}
 class Label:
-    def __init__(self, position, size=13, color=(255,255,255), text='', centered=False, font='RobotoMono-Regular'):
+    def __init__(self, position, size=13, color=(255,255,255), text='', centered=False, font='RobotoMono-Regular', isComponent=False):
         self.position = position
         self.size = size
         self.color = color
@@ -23,7 +23,8 @@ class Label:
             loaded_fonts[self.font][self.size] = pygame.font.Font(f'fonts/{self.font}.ttf', self.size)
         return loaded_fonts[self.font][self.size]
 
-    def draw(self, surface, text=''):
+    def draw(self, surface, text='_'):
+        if text == '_': text = self.text
         if text != '':
             font = self.load_font()
             text = font.render(text, 1, self.color)
@@ -43,3 +44,9 @@ class Label:
         self.surface = self.load_font().render(self.text, 1, self.color)
         if self.surface != None:
             return self.surface.get_height()
+    
+    def update(self):
+        pass
+
+    def get_type(self):
+        return 'Label'

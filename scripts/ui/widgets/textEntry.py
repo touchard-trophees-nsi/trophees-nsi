@@ -38,7 +38,7 @@ class TextEntry(Selectable):
             if sliced[i]=='\r':
                 self.add_chars(''.join(row))
                 row = []
-                self.add_return()
+                self.add_return(isManual = False)
             else:
                 if sliced[i] not in '\r\n':
                     row.append(sliced[i])
@@ -198,32 +198,33 @@ class TextEntry(Selectable):
         self.focus_on_cursor()
 
     def add_char(self, unicode, isManual=False):
-        # DELETE EVERYTHING IN SELECTION
-        if self.isSelecting and self.selection != '':
-            if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
-                self.cursor_pos = self.onClickPos
-            self.backspace() # backspace only once since text is selected
-        if unicode in table:
-            # PLACE CHAR
-            self.content[self.cursor_pos.y] = list(self.content[self.cursor_pos.y])
-            self.content[self.cursor_pos.y].insert(self.cursor_pos.x, unicode)
-            # PLACE 2ND CHAR IF IN AUTOPLACABLE_CHARS
-            if isManual:
-                for i in range(len(autoplacableChars)):
-                    if autoplacableChars[i]==unicode:
-                        self.content[self.cursor_pos.y].insert(self.cursor_pos.x+1, autoplacedChars[i])
-            self.move_cursor(1)
-        elif unicode == 'TAB':
-            self.content[self.cursor_pos.y] = list(self.content[self.cursor_pos.y])
-            self.content[self.cursor_pos.y].insert(self.cursor_pos.x, '   ')
-            self.move_cursor(3)
+        def add(unicode_, isManual_):
+            # DELETE EVERYTHING IN SELECTION
+            if self.isSelecting and self.selection != '':
+                if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
+                    self.cursor_pos = self.onClickPos
+                self.backspace() # backspace only once since text is selected
+            if unicode_ in table:
+                # PLACE CHAR
+                self.content[self.cursor_pos.y] = list(self.content[self.cursor_pos.y])
+                self.content[self.cursor_pos.y].insert(self.cursor_pos.x, unicode_)
+                # PLACE 2ND CHAR IF IN AUTOPLACABLE_CHARS
+                if isManual_:
+                    for i in range(len(autoplacableChars)):
+                        if autoplacableChars[i]==unicode_:
+                            self.content[self.cursor_pos.y].insert(self.cursor_pos.x+1, autoplacedChars[i])
+                self.move_cursor(1)
+        if unicode == 'TAB':
+            for i in range(3): add(' ', isManual)
+        else:
+            add(unicode, isManual)
         self.content[self.cursor_pos.y] = ''.join(self.content[self.cursor_pos.y])
         self.clear_selection()
         self.focus_on_cursor()
         if isManual:
             self.update_labels()
 
-    def base_add_return(self):
+    def base_add_return(self, isManual):
         if self.isSelecting and self.selection != '':
             if self.onReleasePos.x<=self.onClickPos.x and self.onReleasePos.y<=self.onClickPos.y:
                 self.cursor_pos = self.onClickPos
@@ -238,13 +239,15 @@ class TextEntry(Selectable):
         # auto tab feature
         self.cursor_goto_x0()
         spaceCount = 0
-        for i in range(len(self.content[self.cursor_pos.y])):
-            if self.content[self.cursor_pos.y][i]==' ':
-                spaceCount += 1
-            else:
-                break
-        numOfTabs = (spaceCount//3)
-        if len(self.content[self.cursor_pos.y])>0 and self.content[self.cursor_pos.y][-1]==':': numOfTabs += 1
+        numOfTabs = 0
+        if isManual:
+            for i in range(len(self.content[self.cursor_pos.y])):
+                if self.content[self.cursor_pos.y][i]==' ':
+                    spaceCount += 1
+                else:
+                    break
+            numOfTabs = (spaceCount//3)
+            if len(self.content[self.cursor_pos.y])>0 and self.content[self.cursor_pos.y][-1]==':': numOfTabs += 1
         self.move_line(1)
         for i in range(numOfTabs):
             self.add_char('TAB')
@@ -270,8 +273,8 @@ class TextEntry(Selectable):
         self.clear_selection()
         self.focus_on_cursor()
 
-    def add_return(self):
-        self.base_add_return()
+    def add_return(self, isManual=False):
+        self.base_add_return(isManual)
 
     def update_labels(self):
         for i in range(self.displayedLines[0], self.displayedLines[1]):
@@ -315,7 +318,7 @@ class TextEntry(Selectable):
                     self.selection = self.content[self.onClickPos.y][self.onReleasePos.x:self.onClickPos.x]
                 else:
                     self.selection = self.content[self.onClickPos.y][self.onClickPos.x:self.onReleasePos.x]
-        except:print('Selectable.TextEntry error in update_selection(self)')
+        except Exception as e:print(str(e))
 
     def update(self):
         self.base_update()
@@ -397,7 +400,7 @@ class TextEntry(Selectable):
                     pygame.draw.rect(screen, HIGHLIGHT_COLOR, (self.pos.x+self.labelOffset.x+HORIZONTAL_SPACE*(self.onReleasePos.x-self.displayedChars[0]), self.pos.y+self.labelOffset.y+VERTICAL_SPACE*self.onReleasePos.y, (self.onClickPos.x-self.onReleasePos.x)*HORIZONTAL_SPACE, VERTICAL_SPACE))
                 else:
                     pygame.draw.rect(screen, HIGHLIGHT_COLOR, (self.pos.x+self.labelOffset.x+HORIZONTAL_SPACE*(self.onClickPos.x-self.displayedChars[0]), self.pos.y+self.labelOffset.y+VERTICAL_SPACE*(self.onClickPos.y), (self.onReleasePos.x-self.onClickPos.x)*HORIZONTAL_SPACE, VERTICAL_SPACE))
-        except:print('Selectable.TextEntry error in draw(self, screen)')
+        except Exception as e:print(e)
         # drawing text
         for i in range(self.displayedLines[0], self.displayedLines[1]):
             if i < len(self.labels):
@@ -426,7 +429,7 @@ class TextEntry(Selectable):
     def get_type(self):
         return 'Selectable.TextEntry'
 
-class HorizontalTextField(TextEntry):
+class HorizontalTextEntry(TextEntry):
     '''
     A TextEntry-like object which is limited vertically
     '''
@@ -436,8 +439,7 @@ class HorizontalTextField(TextEntry):
         super().__init__(pos, dims, idleColor, hoveredColor, selectedColor, text)
 
     def add_return(self):
-        if (len(self.content)+1)*VERTICAL_SPACE<self.height:
-            self.base_add_return()
+        pass
 
     def get_type(self):
-        return 'Selectable.TextEntry.HorizontalTextField'
+        return 'Selectable.TextEntry.HorizontalTextEntry'
