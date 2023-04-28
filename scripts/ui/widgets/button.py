@@ -24,4 +24,6 @@ class Button(Selectable):
             screen.blit(self.img, (self.pos.x + (self.width/2 - self.img.get_width()/2), self.pos.y + (self.height/2 - self.img.get_height()/2)))
 
     def get_type(self):
+        click_sound=pygame.mixer.Sound("sound/click.mp3")
+        click_sound.play()
         return 'Selectable.Button'
