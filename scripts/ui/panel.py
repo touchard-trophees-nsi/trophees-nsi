@@ -340,7 +340,7 @@ class DefaultPropertiesPanel(Panel):
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x'),
                            'idTextEntry':HorizontalTextEntry(Vector2(self.pos.x+150, self.pos.y+self.barHeight+15), Vector2(240,20), text=parent.get_ID()),
                            'saveDefaultPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+45), Vector2(200,20), textSize=15, text=getText('button.save',lang.getLang()))}
-        self.labels.append(Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text='ID interne:'))
+        self.labels.append(Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text='getText('button.id_internal',lang.getLang())))
         self.labelPosOffsets.append(Vector2(7,self.barHeight+15))
 
         self.componentPosOffsets = []
@@ -378,8 +378,8 @@ class PCBPropertiesPanel(Panel):
                            'savePCBPropertiesButton':Button(Vector2(self.pos.x+int(self.width/2)-100, self.pos.y+self.barHeight+110), Vector2(200,20), textSize=15, text=getText('button.save',lang.getLang()))}
         
         labels_ = [Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+15),size=15,text=getText('button._internal',lang.getLang())),
-                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+45),size=15,text=getText('button.save',lang.getLang())),
-                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+75),size=15,text=getText('button.save',lang.getLang()))]
+                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+45),size=15,text=getText('button.size',lang.getLang())),
+                  Label(Vector2(self.pos.x+7, self.pos.y+self.barHeight+75),size=15,text=getText('button.color',lang.getLang()))]
         labelOffsets_ = [Vector2(7,self.barHeight+15),Vector2(7,self.barHeight+45),Vector2(7,self.barHeight+75)]
         for l in labels_: self.labels.append(l)
         for lo in labelOffsets_: self.labelPosOffsets.append(lo)
