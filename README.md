@@ -6,8 +6,8 @@
 
 <h2>Prérequis</h2>
   <p>Ce jeu est développé en Python, il est donc nécessaire de l'avoir installé.<br>Le projet est programmé en Python et utilise principalement la bibliothèque Pygame (www.pygame.org) qu'il faut préalablement installer. La bibliothèque yaml est aussi indispensable.<br>  - pip install pygame<br>  - pip install pyyaml</p>
-<h2>Bibliothèques non intégrées à Python</h2>
-  <p>Les bibliothèques non intégrées à Python, et qu'il faut donc installer soit même, sont les bibliothèques pygame et pyyaml. La bibliothèque pyperclip est aussi utilisée mais est intégrée au projet (license incluse).
+<h2>Je n'arrive pas à lancer Micro Gadgets, que faire ?</h2>
+  <p>Si vous n'arrivez pas à lancer Micro Gadgets depuis main.py, vous avez la possibilité de télécharger le fichier .exe à mettre au même niveau que main.py. Pour télécharger l'exécutable, <a href=https://drive.google.com/file/d/1Jto_N2KYLI7EhA19TxMnu7m-MXF-Wk5L/view?usp=share_link>cliquez ici.</a></p>
 <h2>Images</h2>
 <img src='doc/images/Screenshot_1.png'>
 <img src='doc/images/Screenshot_2.png' width='500'>
