@@ -5,7 +5,7 @@
 ----
 
 <h2>Guide d'utilisation</h2>
-  <p>Ce jeu est développé en Python, il est donc nécessaire de l'avoir installé.<br>Le jeu fonctionne avec la bibliothèque Pygame, il faut donc l'avoir installée. Si ce n'est pas le cas il suffit d'exécuter la commande suivante `pip install pygame`. Pour lancer le projet il faut exécuter le ficher main.py. Il est aussi nécessaire d'avoir le module yaml installé, ce module est requis pour le système de traduction, si vous ne l'avez pas installé il suffit d'éxecuter la commande `pip install pyyaml`.</p>
+  <p>Ce jeu est développé en Python, il est donc nécessaire de l'avoir installé.<br>Le projet est programmé en Python et utilise principalement la bibliothèque Pygame (www.pygame.org) qu'il faut préalablement installer. La bibliothèque yaml est aussi indispensable.<br>  - pip install pygame<br>  - pip install pyyaml</p>
 <h2>Bibliothèques</h2>
   <p>Ce jeu utilise la bibliothèque Pygame.
 <h2>Images</h2>
