@@ -255,6 +255,23 @@ class KeyboardPanel(Panel):
     def get_type(self):
         return 'Panel.KeyboardPanel'
 
+class CreditsPanel(Panel):
+    def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name='', font='RobotoMono-Regular', hasBar=False):
+        super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
+        colors = gradient_palette(self.barColor, step=-15)
+        self.components = {'Credits': Button(Vector2(camera.w_2,camera.h_2), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],img = load_sprite('credits/'+lang.getLang())),
+                           'Logo': Button(Vector2(camera.w_2,camera.h_2-370), Vector2(0,0), idleColor=colors[1], hoveredColor=colors[1], selectedColor=colors[1],img = load_sprite('logo')),
+                           'BackButton':Button(Vector2(camera.w_2-140,camera.h_2+250), Vector2(280,75), idleColor=colors[0], hoveredColor=colors[1], selectedColor=colors[2],text= getText('button.back',lang.getLang()), textSize=35),}
+
+        self.componentPosOffsets = []
+        for comp in self.components.values():
+            self.componentPosOffsets.append(comp.pos-self.pos)
+
+    
+
+    def get_type(self):
+        return 'Panel.CreditsPanel'
+    
 def update_panel_buttons(panels, shapes):
     doBreak = False
 
@@ -297,6 +314,9 @@ def update_panel_buttons(panels, shapes):
                     elif 'SettingsButton' in panel.components.keys() and comp==panel.components['SettingsButton']:
                         panels.remove(panel)
                         panels.append(SettingsPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
+                    elif 'CreditsButton' in panel.components.keys() and comp==panel.components['CreditsButton']:
+                        panels.remove(panel)
+                        panels.append(CreditsPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])))
                     elif 'QuitButton' in panel.components.keys() and comp==panel.components['QuitButton']:
                         pygame.quit()
                         sys.exit()
