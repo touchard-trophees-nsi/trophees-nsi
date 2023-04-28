@@ -22,3 +22,7 @@ def set_game_state(state):
 def get_game_state():
     global isDeviceRunning
     return isDeviceRunning
+
+def stop_game():
+    set_game_state(False)
+    set_code('','',get_code()[2])

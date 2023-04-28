@@ -39,7 +39,7 @@ def key_update(key, isPressingShift, isPressingCtrl):
                 elif key=='backspace':
                     cursor.selectedElement.backspace(ctrl=keys[key][2])
                 elif key=='return':
-                    cursor.selectedElement.add_return()
+                    cursor.selectedElement.add_return(isManual=True)
                 elif key in keys.keys():
                     cursor.selectedElement.add_char(key, isManual=True)
                 keys[key][3]+=1
@@ -79,7 +79,7 @@ def update_event(event):
             elif isPressingCtrl and isKeyboardAzerty and event.key==pygame.K_q: cursor.selectedElement.select_all() ;
                 # paste, cut
             elif isPressingCtrl and event.key==pygame.K_v: cursor.selectedElement.clipboard_paste()
-            elif isPressingCtrl and event.key==pygame.K_x: cursor.selectedElement.clipboard_copy() ; cursor.selectedElement.backspace() ; print('cut')
+            elif isPressingCtrl and event.key==pygame.K_x: cursor.selectedElement.clipboard_copy() ; cursor.selectedElement.backspace() ;
             # --- Special Input
             elif event.key == pygame.K_BACKSPACE: key_press('backspace', isPressingShift, isPressingCtrl) #cursor.selectedElement.backspace(ctrl=isPressingCtrl)
             elif event.key == pygame.K_RETURN: key_press('return', isPressingShift, isPressingCtrl) #cursor.selectedElement.add_return()

@@ -42,7 +42,7 @@ class Vector2:
         return Vector2(self.x*vec2, self.y*vec2)
 
     def __eq__(self, vec2):
-        return (self.x == vec2.x and self.y == self.y)
+        return (self.x == vec2.x and self.y == vec2.y)
 
     def __repr__(self):
         return 'Vector2({},{})'.format(str(self.x),str(self.y))

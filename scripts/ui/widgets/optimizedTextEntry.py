@@ -47,10 +47,8 @@ class OptimizedTextEntry(Selectable):
     # ---------------------------- #
 
     def backspace(self,ctrl=False):
-        print('test')
         if self.editIndex>0:
             self.content = self.content[:self.editIndex-1]+self.content[self.editIndex:]
-            print('backspaced :',self.content)
         self.parse_content()
 
     def add_return(self,ctrl=False):
@@ -69,7 +67,6 @@ class OptimizedTextEntry(Selectable):
         self.labels=[]
         for i in range(len(lines)):
             self.labels.append(Label(self.pos, size=15,text=lines[i]))
-        print(self.labels[0].text)
 
     # ----------------------------- #
     # ------- FRAME REFRESH ------- #
@@ -88,7 +85,6 @@ class OptimizedTextEntry(Selectable):
         pygame.draw.rect(screen, tuple(self.color), (self.pos.x, self.pos.y, self.width, self.height))
         # drawing labels
         for label in self.labels:
-            print(label.text)
             label.draw(screen, text=label.text)
     
     def get_type(self):
