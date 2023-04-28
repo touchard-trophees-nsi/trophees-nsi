@@ -10,7 +10,7 @@
   <p>Ce jeu utilise la bibliothèque Pygame.
 <h2>Images</h2>
 <img src='doc/images/Screenshot_1.png'>
-<img src='doc/images/Screenshot 2.png' width='500'>
+<img src='doc/images/Screenshot_2.png' width='500'>
 <h2>Projet pour les Trophées NSI</h2>
 <p>Nous avons créé ce jeu pour les <a href='https://trophees-nsi.fr/'>trophées NSI 2023</a></p>
 <h2>Licence</h2>
