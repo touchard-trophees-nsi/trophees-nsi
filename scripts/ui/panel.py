@@ -27,12 +27,12 @@ from scripts.components.input.pressButton import PressButton
 from scripts.components.input.directionalButton import DirectionalButton
 
 defaultShapes = {
-    'circuit imprimé':PCB(Vector2(61,61),Vector2(300,300)),
+    getText('text.printed_circuit_board',lang.getLang()):PCB(Vector2(61,61),Vector2(300,300)),
     'CPU':CPU(Vector2(61,61),Vector2(80,80)),
-    'puce vidéo':VideoChip(Vector2(61,61),Vector2(80,40)),
-    'écran':Screen(Vector2(61,61),Vector2(170,170)),
-    'bouton simple':PressButton(Vector2(61,61),Vector2(50,50)),
-    'bouton directionnel':DirectionalButton(Vector2(61,61),Vector2(120,120))
+    getText('text.video_chip',lang.getLang()):VideoChip(Vector2(61,61),Vector2(80,40)),
+    getText('text.screen',lang.getLang()):Screen(Vector2(61,61),Vector2(170,170)),
+    getText('text.simple_boutton',lang.getLang()):PressButton(Vector2(61,61),Vector2(50,50)),
+    getText('directional_button',lang.getLang()):DirectionalButton(Vector2(61,61),Vector2(120,120))
 }
 
 class CommonLang:
@@ -193,6 +193,8 @@ class TopNavPanel(Panel):
 
 class AddComponentPanel(Panel):
     def __init__(self, pos, dims, bgColor=defaultPalette[0], barColor=defaultPalette[1], name=getText('text.add_a_component',lang.getLang()), font='RobotoMono-Regular', hasBar=True):
+        self.name = getText('text.add_a_component',lang.getLang())
+        self.labels = [Label(Vector2(self.pos.x+7, self.pos.y+2), size=17, text=self.name, font=font)]
         super().__init__(pos, dims, bgColor, barColor, name, font, hasBar)
         self.components = {'closeButton':Button(Vector2(self.pos.x+self.width-50, self.pos.y), Vector2(50,self.barHeight), idleColor=self.barColor, hoveredColor=RGB(255,50,50), selectedColor=RGB(255,50,50), text='x')}
 
