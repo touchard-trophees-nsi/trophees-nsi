@@ -10,7 +10,7 @@ from scripts.cursor import cursor
 from scripts.events import update_event, keys, key_update
 from scripts.math.vector2 import Vector2, vectorize
 from scripts.math.camera import camera
-from scripts.ui.panel import AddComponentPanel, TextPanel, TopNavPanel, update_panel_buttons
+from scripts.ui.panel import MenuPanel, AddComponentPanel, TextPanel, TopNavPanel, update_panel_buttons
 from scripts.ui.grid import grid
 from scripts.components.shapes import update_shape_dragging
 from scripts.dev import dev_update_and_draw, dev_update, dprint
@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 
 # variables & functions
-panels = [MenuPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1])),AddComponentPanel(Vector2(120,120), Vector2(280,240)), TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40))]
+panels = [TopNavPanel(Vector2(camera.w_2-80, 0), Vector2(160, 40)), MenuPanel(Vector2(0,0), Vector2(pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[0],pygame.display.set_mode((0,0), pygame.FULLSCREEN).get_size()[1]))]
 shapes = []
 lastPressed = None
 oldGameState = False
