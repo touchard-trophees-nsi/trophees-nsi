@@ -15,3 +15,15 @@ button.add_a_component: "Add component"
 button.language: "Language"
 button.keyboard: "Keyboard"
 button.back: "Back"
+button.add: 'Added'
+button.save: 'Saved'
+button.delete: 'Delete'
+button.rotate: 'Rotate'
+button.characteristics: 'Characteristics'
+button.id_internal: 'Internal ID:'
+button.size: 'Size:'
+button.color: 'Display color:'
+button.id_video: 'Video chip ID:'
+text.attach_cpu: 'Please attach a CPU to a circuit board!'
+text.save_success: 'Successfully saved!'
+text.invalid_field: 'Invalid fields!'
