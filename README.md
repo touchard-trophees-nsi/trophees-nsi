@@ -1,7 +1,7 @@
 <h1 align="center">MICRO GADGETS</h1>
 
 <p>Micro Gadgets est un simulateur d'objets programmables. Des composants peuvent être ajoutés, déplacés et liés entre eux pour créer la structure d'une machine, qui est ensuite programmable en python. Certaines machines préconstruites sont disponibles dans le jeu.
-<br><a href=https://tube-sciences-technologies.apps.education.fr/w/raHJgnTA66XkB5dwNjPJz2>Vidéo de présentation</a>
+<br>Une <a href=https://tube-sciences-technologies.apps.education.fr/w/raHJgnTA66XkB5dwNjPJz2>vidéo de présentation</a> de notre projet est disponible sur le site Peertube.
 </p>
 
 
@@ -28,6 +28,13 @@
 </p>
 <img src='doc/images/gallerie_console.png'>
 <br>
+
+<h2>Et après ?</h2>
+<p>Une fois le concours terminer, nous envisageons d'améliorer notre projet sur certains points que nous n'avons pas pu traiter plus tôt, une liste non-exhaustive de ces points est :
+<br>  - la sécurisation de la console qui est encore très (trop) flexible, permettant de faire des injections en Python afin de modifier le code du projet pendant le run time
+<br>  - l'optimisation de certains élements (console, composants)
+<br>  - ajout de contenu de QoL (possibilité de lier les élements à des touches, différentes qualités de composants plus ou moins limitants)
+</p>
 
 <h2>Licence</h2>
 <p>Le programme est placé sous la licence publique générale GNU version 3+.
