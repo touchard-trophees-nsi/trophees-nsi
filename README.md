@@ -1,6 +1,7 @@
 <h1 align="center">MICRO GADGETS</h1>
 
 <p>Micro Gadgets est un simulateur d'objets programmables. Des composants peuvent être ajoutés, déplacés et liés entre eux pour créer la structure d'une machine, qui est ensuite programmable en python. Certaines machines préconstruites sont disponibles dans le jeu.</p>
+<a href=https://tube-sciences-technologies.apps.education.fr/w/raHJgnTA66XkB5dwNjPJz2>Vidéo de présentation</a>
 
 ----
 <br>
